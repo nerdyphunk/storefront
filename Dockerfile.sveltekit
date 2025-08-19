@@ -22,8 +22,8 @@ COPY . .
 # Update browserslist database
 RUN npx update-browserslist-db@latest
 
-# Build application (skip husky install in Docker)
-RUN HUSKY=0 pnpm run build
+# Use Docker-specific config and build application (skip husky install in Docker)
+RUN cp svelte.config.docker.js svelte.config.js && HUSKY=0 pnpm run build
 
 # Production stage
 FROM base AS production
