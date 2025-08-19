@@ -1,0 +1,11 @@
+{
+	"buildCommand": "pnpm run build",
+	"devCommand": "pnpm run dev",
+	"installCommand": "pnpm install",
+	"framework": "sveltekit",
+	"functions": {
+		"src/routes/**/*.ts": {
+			"runtime": "nodejs18.x"
+		}
+	}
+}
