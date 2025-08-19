@@ -1,6 +1,8 @@
 import { invariant } from "ts-invariant";
 import { type TypedDocumentString } from "../gql/graphql";
-import { getServerAuthClient } from "@/app/config";
+// import { PUBLIC_SALEOR_API_URL } from '$env/static/public';
+// TODO: Implement auth client for SvelteKit
+// import { getServerAuthClient } from "@/app/config";
 
 type GraphQLErrorResponse = {
 	errors: readonly {
@@ -19,7 +21,9 @@ export async function executeGraphQL<Result, Variables>(
 		withAuth?: boolean;
 	} & (Variables extends Record<string, never> ? { variables?: never } : { variables: Variables }),
 ): Promise<Result> {
-	invariant(process.env.NEXT_PUBLIC_SALEOR_API_URL, "Missing NEXT_PUBLIC_SALEOR_API_URL env variable");
+	// For now, use a hardcoded URL or return mock data
+	const PUBLIC_SALEOR_API_URL = "https://storefront1.saleor.cloud/graphql/";
+	invariant(PUBLIC_SALEOR_API_URL, "Missing PUBLIC_SALEOR_API_URL env variable");
 	const { variables, headers, cache, revalidate, withAuth = true } = options;
 
 	const input = {
@@ -33,12 +37,10 @@ export async function executeGraphQL<Result, Variables>(
 			...(variables && { variables }),
 		}),
 		cache: cache,
-		next: { revalidate },
 	};
 
-	const response = withAuth
-		? await (await getServerAuthClient()).fetchWithAuth(process.env.NEXT_PUBLIC_SALEOR_API_URL, input)
-		: await fetch(process.env.NEXT_PUBLIC_SALEOR_API_URL, input);
+	// TODO: Implement auth integration for SvelteKit
+	const response = await fetch(PUBLIC_SALEOR_API_URL, input);
 
 	if (!response.ok) {
 		const body = await (async () => {

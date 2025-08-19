@@ -1,9 +1,9 @@
-import { loadEnvConfig } from "@next/env";
 import type { CodegenConfig } from "@graphql-codegen/cli";
+import { config } from "dotenv";
 
-loadEnvConfig(process.cwd());
+config();
 
-let schemaUrl = process.env.NEXT_PUBLIC_SALEOR_API_URL;
+let schemaUrl = process.env.PUBLIC_SALEOR_API_URL;
 
 if (process.env.GITHUB_ACTION === "generate-schema-from-file") {
 	schemaUrl = "schema.graphql";
@@ -11,13 +11,13 @@ if (process.env.GITHUB_ACTION === "generate-schema-from-file") {
 
 if (!schemaUrl) {
 	console.error(
-		"Before GraphQL types can be generated, you need to set NEXT_PUBLIC_SALEOR_API_URL environment variable.",
+		"Before GraphQL types can be generated, you need to set PUBLIC_SALEOR_API_URL environment variable.",
 	);
 	console.error("Follow development instructions in the README.md file.");
 	process.exit(1);
 }
 
-const config: CodegenConfig = {
+const graphqlConfig: CodegenConfig = {
 	overwrite: true,
 	schema: schemaUrl,
 	documents: "src/graphql/**/*.graphql",
@@ -54,4 +54,4 @@ const config: CodegenConfig = {
 	},
 };
 
-export default config;
+export default graphqlConfig;
