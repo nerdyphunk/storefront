@@ -1,0 +1,40 @@
+# Docker Compose для Development среды
+services:
+  saleor-storefront-dev:
+    container_name: saleor-storefront-dev
+    build:
+      context: .
+      dockerfile: Dockerfile.sveltekit
+      target: development
+    environment:
+      - NODE_ENV=development
+      - PUBLIC_SALEOR_API_URL=${PUBLIC_SALEOR_API_URL:-https://store-qdjgu50o.eu.saleor.cloud/graphql/}
+      - PUBLIC_STOREFRONT_URL=${PUBLIC_STOREFRONT_URL:-http://localhost:3000}
+      - DEBUG=true
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount source for hot reload
+      - ./src:/app/src
+      - ./static:/app/static
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - saleor_network
+
+  # Optional: Add development tools
+  # adminer:
+  #   image: adminer
+  #   container_name: adminer-dev
+  #   ports:
+  #     - "8080:8080"
+  #   networks:
+  #     - saleor_network
+
+networks:
+  saleor_network:
+    external: false

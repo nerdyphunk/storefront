@@ -70,49 +70,63 @@
 
 ## 🚀 Quick Start
 
-### 1. Create Saleor backend instance
+### 1. Setup Saleor Backend
 
-To quickly get started with the backend, use a free developer account at [Saleor Cloud](https://cloud.saleor.io/?utm_source=storefront&utm_medium=github).
+Use a free developer account at [Saleor Cloud](https://cloud.saleor.io/?utm_source=storefront&utm_medium=github) or [run Saleor locally](https://docs.saleor.io/docs/3.x/setup/docker-compose?utm_source=storefront&utm_medium=github).
 
-Alternatively you can [run Saleor locally using docker](https://docs.saleor.io/docs/3.x/setup/docker-compose?utm_source=storefront&utm_medium=github).
+### 2. Choose Your Development Method
 
-### 2. Clone and setup storefront
+#### 🎯 **Super Quick Start**
 
 ```bash
-# Clone repository
+# Clone and start with CLI helper
 git clone <your-repo-url>
 cd saleor-storefront
 
-# Setup environment
-cp .env.example .env
-# Edit .env and set PUBLIC_SALEOR_API_URL to your Saleor GraphQL endpoint
+# Show all available commands
+./dev.sh help
+
+# Start development server
+./dev.sh start
 ```
 
-### 3. Run the application
-
-#### Option A: Docker (Recommended)
+#### 🐳 **Docker (Recommended for Production)**
 
 ```bash
-# Auto-detects docker-compose or docker compose
-./deploy.sh
+# Development with hot reload
+./dev.sh docker development
 
-# Or using npm scripts
-pnpm run docker:deploy
+# Production build
+./dev.sh docker production
+
+# Check status
+./dev.sh status
 ```
 
-#### Option B: Local development
+#### 💻 **Local Development**
 
 ```bash
 # Install dependencies
 pnpm install
 
-# Start development server
-pnpm run dev
+# Start development
+pnpm run dev:local
+```
+
+#### ☁️ **Deploy to Vercel**
+
+```bash
+# Set environment variables in Vercel dashboard:
+# PUBLIC_SALEOR_API_URL=https://your-saleor.com/graphql/
+# PUBLIC_STOREFRONT_URL=https://your-app.vercel.app
+
+# Deploy
+vercel --prod
 ```
 
 🌐 **Open http://localhost:3000**
 
-📄 **See [QUICK_START.md](./QUICK_START.md) for detailed instructions**
+📖 **See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for complete instructions**
 
 ## Payments
 

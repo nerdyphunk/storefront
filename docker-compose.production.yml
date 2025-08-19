@@ -1,0 +1,28 @@
+# Docker Compose для Production среды
+services:
+  saleor-storefront-prod:
+    container_name: saleor-storefront-prod
+    build:
+      context: .
+      dockerfile: Dockerfile.sveltekit
+    environment:
+      - NODE_ENV=production
+      - PUBLIC_SALEOR_API_URL=${PUBLIC_SALEOR_API_URL:-https://store-qdjgu50o.eu.saleor.cloud/graphql/}
+      - PUBLIC_STOREFRONT_URL=${PUBLIC_STOREFRONT_URL}
+      - DEBUG=false
+    restart: always
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - saleor_network
+
+  # Add more containers below (nginx, postgres, etc.)
+
+networks:
+  saleor_network:
+    external: false

@@ -1,3 +1,4 @@
+# Multi-stage Dockerfile for SvelteKit
 FROM node:20-alpine AS base
 
 # Install pnpm and git
@@ -5,19 +6,35 @@ RUN corepack enable pnpm && \
     corepack install -g pnpm@10.14.0 && \
     apk add --no-cache git wget
 
-# Build stage
-FROM base AS build
+# Dependencies stage
+FROM base AS deps
 WORKDIR /app
 
 # Copy package files
 COPY package.json pnpm-lock.yaml ./
-COPY .env.example .env
 
 # Install dependencies
 RUN pnpm install --frozen-lockfile
 
-# Copy source code
+# Development dependencies stage (includes devDependencies for development)
+FROM base AS dev-deps
+WORKDIR /app
+
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
+
+# Install all dependencies including dev dependencies
+RUN pnpm install --frozen-lockfile
+
+# Build stage
+FROM dev-deps AS build
+WORKDIR /app
+
+# Copy all source code
 COPY . .
+
+# Copy environment file
+COPY .env.example .env
 
 # Update browserslist database
 RUN npx update-browserslist-db@latest
@@ -29,11 +46,18 @@ RUN cp svelte.config.docker.js svelte.config.js && HUSKY=0 pnpm run build
 FROM base AS production
 WORKDIR /app
 
-# Copy built application
+# Copy built application and dependencies
 COPY --from=build /app/build build/
-COPY --from=build /app/node_modules node_modules/
+COPY --from=deps /app/node_modules node_modules/
 COPY --from=build /app/package.json .
-COPY --from=build /app/.env .
+
+# Create a non-root user
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 sveltekit
+
+# Change ownership to non-root user
+RUN chown -R sveltekit:nodejs /app
+USER sveltekit
 
 # Expose port
 EXPOSE 3000
@@ -42,5 +66,29 @@ EXPOSE 3000
 ENV NODE_ENV=production
 ENV PORT=3000
 
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:3000 || exit 1
+
 # Start the application
 CMD ["node", "build"]
+
+# Development stage (for hot reload)
+FROM dev-deps AS development
+WORKDIR /app
+
+# Copy source code
+COPY . .
+
+# Copy environment file
+COPY .env.example .env
+
+# Expose port
+EXPOSE 3000
+
+# Set environment variables
+ENV NODE_ENV=development
+ENV PORT=3000
+
+# Start development server with hot reload
+CMD ["pnpm", "run", "dev", "--host", "0.0.0.0"]

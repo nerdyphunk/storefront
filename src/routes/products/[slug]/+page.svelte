@@ -15,6 +15,18 @@
 	);
 
 	const currentPrice = $derived(selectedVariant?.pricing?.price?.gross);
+
+	// Auto-select first variant if none selected
+	$effect(() => {
+		if (typeof window !== "undefined" && product?.variants?.length && !selectedVariantId) {
+			const firstVariant = product.variants[0];
+			if (firstVariant?.id) {
+				const url = new URL(window.location.href);
+				url.searchParams.set("variant", firstVariant.id);
+				window.history.replaceState({}, "", url.toString());
+			}
+		}
+	});
 </script>
 
 <svelte:head>

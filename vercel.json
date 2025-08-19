@@ -1,3 +1,19 @@
 {
-	"framework": "sveltekit"
+	"buildCommand": "pnpm run vercel:build",
+	"framework": "sveltekit",
+	"installCommand": "pnpm install",
+	"env": {
+		"NODE_ENV": "production"
+	},
+	"build": {
+		"env": {
+			"NODE_ENV": "production",
+			"GRAPHQL_INTROSPECTION": "false"
+		}
+	},
+	"functions": {
+		"src/routes/api/**/*.js": {
+			"maxDuration": 30
+		}
+	}
 }

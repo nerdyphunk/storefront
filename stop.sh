@@ -13,11 +13,16 @@ get_docker_compose_cmd() {
     fi
 }
 
-# Get the appropriate Docker Compose command
 DOCKER_COMPOSE_CMD=$(get_docker_compose_cmd)
-echo "📦 Using: $DOCKER_COMPOSE_CMD"
+ENV=${1:-${NODE_ENV:-development}}
+COMPOSE_FILE="docker-compose.${ENV}.yml"
 
-echo "🛑 Stopping Saleor Storefront..."
-$DOCKER_COMPOSE_CMD -f docker-compose.prod.yml down
+if [ ! -f "$COMPOSE_FILE" ]; then
+    COMPOSE_FILE="docker-compose.yml"
+fi
+
+echo "📦 Using: $DOCKER_COMPOSE_CMD"
+echo "🛑 Stopping Saleor Storefront ($ENV)..."
+$DOCKER_COMPOSE_CMD -f "$COMPOSE_FILE" down
 
 echo "✅ Application stopped!"

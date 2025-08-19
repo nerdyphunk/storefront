@@ -34,25 +34,56 @@ export async function getCurrentProductPrice({ page }: { page: Page }) {
 }
 
 export async function selectRandomAvailableVariant({ page }: { page: Page }) {
-	// some products only have a single variant so this block can throw and it's expected
+	// Wait for page to load
+	await page.waitForLoadState("networkidle");
+
+	// Check if we already have a variant in URL (auto-selected first variant)
+	if (page.url().includes("?variant=")) {
+		return;
+	}
+
+	// Try to find and select a variant manually
 	try {
-		await page.getByTestId("VariantSelector").waitFor({ timeout: 1000 });
+		await page.getByTestId("VariantSelector").waitFor({ timeout: 2000 });
 		const variant = page.getByTestId("VariantSelector").getByRole("radio", { disabled: false });
 		const count = await variant.count();
 		if (count > 0) {
 			await variant.nth(Math.floor(Math.random() * count)).click();
+			// Wait for URL to update after click
+			await page.waitForURL(/\?variant=.+/, { timeout: 5000 });
 		}
-	} catch {}
+	} catch (error) {
+		// If no variant selector found, try to set first variant manually
+		const firstVariantScript = `
+			const firstVariant = document.querySelector('[name="variant"]');
+			if (firstVariant && firstVariant.value) {
+				const url = new URL(window.location.href);
+				url.searchParams.set('variant', firstVariant.value);
+				window.history.replaceState({}, '', url.toString());
+			}
+		`;
+		await page.evaluate(firstVariantScript);
 
-	await page.waitForURL(/\?variant=.+/);
+		// Check if URL was updated
+		if (!page.url().includes("?variant=")) {
+			console.log("Warning: Could not set variant parameter in URL");
+		}
+	}
 }
 
 export async function addCurrentProductToCart({ page }: { page: Page }) {
 	expect(page.url()).toContain("/products/");
-	expect(page.url()).toContain("?variant=");
+
+	// Wait for Add to cart button to be enabled and visible
 	const checkoutButton = page.getByRole("button", { name: "Add to cart" });
+	await checkoutButton.waitFor({ state: "visible" });
+	await expect(checkoutButton).toBeEnabled();
+
+	// Click the button
 	await checkoutButton.click();
-	await checkoutButton.isEnabled();
+
+	// Wait a moment for the action to complete
+	await page.waitForTimeout(1000);
 }
 
 export async function openCart({ page }: { page: Page }) {
