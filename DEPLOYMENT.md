@@ -183,7 +183,9 @@ docker-compose -f docker-compose.prod.yml up --build -d
 
 - ✅ Удалено устаревшее `version` поле в Docker Compose
 - ✅ Обновлен pnpm до 10.14.0
+- ✅ Обновлен Node.js до 20.x (LTS)
 - ✅ Исправлен tsconfig.json для SvelteKit
+- ✅ Vercel runtime ошибки исправлены
 - ✅ База данных browserslist обновляется автоматически
 - ✅ Husky пропускается в Docker контейнерах
 
