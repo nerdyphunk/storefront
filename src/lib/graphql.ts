@@ -1,8 +1,7 @@
 import { invariant } from "ts-invariant";
 import { type TypedDocumentString } from "../gql/graphql";
-// import { PUBLIC_SALEOR_API_URL } from '$env/static/public';
-// TODO: Implement auth client for SvelteKit
-// import { getServerAuthClient } from "@/app/config";
+import { PUBLIC_SALEOR_API_URL } from "$env/static/public";
+// TODO: Implement auth client for SvelteKit if needed
 
 type GraphQLErrorResponse = {
 	errors: readonly {
@@ -21,9 +20,11 @@ export async function executeGraphQL<Result, Variables>(
 		withAuth?: boolean;
 	} & (Variables extends Record<string, never> ? { variables?: never } : { variables: Variables }),
 ): Promise<Result> {
-	// For now, use a hardcoded URL or return mock data
-	const PUBLIC_SALEOR_API_URL = "https://storefront1.saleor.cloud/graphql/";
-	invariant(PUBLIC_SALEOR_API_URL, "Missing PUBLIC_SALEOR_API_URL env variable");
+	invariant(
+		PUBLIC_SALEOR_API_URL,
+		"Missing PUBLIC_SALEOR_API_URL env variable. Please set it in your Vercel environment variables.",
+	);
+	console.log("Using Saleor API:", PUBLIC_SALEOR_API_URL);
 	const { variables, headers, cache, revalidate, withAuth = true } = options;
 
 	const input = {

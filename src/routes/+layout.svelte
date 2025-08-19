@@ -24,6 +24,7 @@
 					<a href="/" class="text-gray-700 hover:text-gray-900">Home</a>
 					<a href="/products" class="text-gray-700 hover:text-gray-900">Products</a>
 					<a href="/cart" class="text-gray-700 hover:text-gray-900">Cart</a>
+					<a href="/debug" class="text-sm text-gray-500 hover:text-gray-700">Debug</a>
 				</div>
 			</div>
 		</nav>

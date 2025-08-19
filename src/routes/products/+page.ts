@@ -1,59 +1,39 @@
+import { ProductListPaginatedDocument } from "../../gql/graphql";
+import { executeGraphQL } from "../../lib/graphql";
 import type { PageLoad } from "./$types";
 
-export const load: PageLoad = async () => {
-	// Mock products for now
-	const mockProducts = [
-		{
-			id: "1",
-			name: "Sample Product 1",
-			slug: "sample-product-1",
-			thumbnail: {
-				url: "https://via.placeholder.com/300x300?text=Product+1",
-				alt: "Sample Product 1",
-			},
-			category: { name: "Electronics" },
-			pricing: {
-				priceRange: {
-					start: { gross: { amount: 99.99, currency: "USD" } },
-					stop: { gross: { amount: 99.99, currency: "USD" } },
-				},
-			},
-		},
-		{
-			id: "2",
-			name: "Sample Product 2",
-			slug: "sample-product-2",
-			thumbnail: {
-				url: "https://via.placeholder.com/300x300?text=Product+2",
-				alt: "Sample Product 2",
-			},
-			category: { name: "Clothing" },
-			pricing: {
-				priceRange: {
-					start: { gross: { amount: 49.99, currency: "USD" } },
-					stop: { gross: { amount: 79.99, currency: "USD" } },
-				},
-			},
-		},
-		{
-			id: "3",
-			name: "Sample Product 3",
-			slug: "sample-product-3",
-			thumbnail: {
-				url: "https://via.placeholder.com/300x300?text=Product+3",
-				alt: "Sample Product 3",
-			},
-			category: { name: "Home & Garden" },
-			pricing: {
-				priceRange: {
-					start: { gross: { amount: 29.99, currency: "USD" } },
-					stop: { gross: { amount: 29.99, currency: "USD" } },
-				},
-			},
-		},
-	];
+export const load: PageLoad = async ({ url }) => {
+	try {
+		const channel = "default-channel";
 
-	return {
-		products: mockProducts,
-	};
+		// Get pagination parameters from URL
+		const first = parseInt(url.searchParams.get("first") || "12");
+		const after = url.searchParams.get("after") || undefined;
+
+		const data = await executeGraphQL(ProductListPaginatedDocument, {
+			variables: {
+				first,
+				after,
+				channel,
+			},
+		});
+
+		if (data.products?.edges?.length) {
+			const products = data.products.edges.map(({ node: product }) => product);
+			const pageInfo = data.products.pageInfo;
+			return { products, pageInfo };
+		}
+
+		return {
+			products: [],
+			pageInfo: null,
+		};
+	} catch (error) {
+		console.error("Failed to fetch products:", error);
+		return {
+			products: [],
+			pageInfo: null,
+			error: "Failed to load products. Please check API configuration.",
+		};
+	}
 };
