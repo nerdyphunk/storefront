@@ -1,4 +1,4 @@
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fyour-username%2Fsaleor-sveltekit-storefront&env=PUBLIC_SALEOR_API_URL&envDescription=Full%20Saleor%20GraphQL%20endpoint%20URL%2C%20eg%3A%20https%3A%2F%2Fstorefront1.saleor.cloud%2Fgraphql%2F&project-name=my-saleor-storefront&repository-name=my-saleor-storefront&demo-title=Saleor%20SvelteKit%20Storefront&demo-description=Starter%20pack%20for%20building%20performant%20e-commerce%20experiences%20with%20Saleor%20and%20SvelteKit.)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fyour-username%2Fsaleor-sveltekit-storefront&env=PUBLIC_SALEOR_API_URL,PUBLIC_STOREFRONT_URL&envDescription=Saleor%20GraphQL%20API%20URL%20and%20Storefront%20URL&project-name=my-saleor-storefront&repository-name=my-saleor-storefront&demo-title=Saleor%20SvelteKit%20Storefront&demo-description=Modern%20e-commerce%20storefront%20with%20SvelteKit%20and%20Saleor.)
 
 > ⚡ **Migrated from Next.js to SvelteKit** - Modern, fast, and developer-friendly e-commerce storefront.
 
