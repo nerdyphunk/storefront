@@ -1,7 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
-import NextEnv from "@next/env";
+import { config } from "dotenv";
 
-NextEnv.loadEnvConfig(".");
+config();
 
 const PORT = process.env.PORT || 3000;
 const baseURL = process.env.BASE_URL || `http://localhost:${PORT}`;
@@ -49,8 +49,9 @@ export default defineConfig({
 	webServer: process.env.BASE_URL
 		? undefined
 		: {
-				command: "pnpm run start",
+				command: "pnpm run dev",
 				url: baseURL,
 				reuseExistingServer: !process.env.CI,
-		  },
+				timeout: 120_000,
+			},
 });

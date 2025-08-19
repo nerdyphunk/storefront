@@ -18,7 +18,8 @@
 		"docker:deploy": "./deploy.sh",
 		"docker:stop": "./stop.sh",
 		"docker:logs": "./logs.sh",
-		"docker:status": "./status.sh"
+		"docker:status": "./status.sh",
+		"start": "vite preview"
 	},
 	"dependencies": {
 		"@adyen/adyen-web": "5.53.3",
@@ -81,5 +82,8 @@
 	"engines": {
 		"pnpm": ">=9.4.0",
 		"node": ">=20"
+	},
+	"scripts-info": {
+		"package-managers": "This project supports pnpm (recommended), npm, and yarn. Use the package manager of your choice."
 	}
 }

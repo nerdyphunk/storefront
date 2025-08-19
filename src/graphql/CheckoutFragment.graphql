@@ -1,0 +1,45 @@
+fragment CheckoutFragment on Checkout {
+	id
+	email
+	totalPrice {
+		gross {
+			amount
+			currency
+		}
+	}
+	lines {
+		id
+		quantity
+		totalPrice {
+			gross {
+				amount
+				currency
+			}
+		}
+		variant {
+			id
+			name
+			quantityAvailable
+			pricing {
+				price {
+					gross {
+						amount
+						currency
+					}
+				}
+			}
+			product {
+				id
+				name
+				slug
+				thumbnail {
+					url
+					alt
+				}
+				category {
+					name
+				}
+			}
+		}
+	}
+}

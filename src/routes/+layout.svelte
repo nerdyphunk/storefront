@@ -1,6 +1,7 @@
 <script lang="ts">
 	import "../app.css";
 	import { page } from "$app/stores";
+	import CartNavItem from "../lib/components/CartNavItem.svelte";
 
 	let { children } = $props();
 </script>
@@ -23,7 +24,7 @@
 				<div class="flex items-center space-x-6">
 					<a href="/" class="text-gray-700 hover:text-gray-900">Home</a>
 					<a href="/products" class="text-gray-700 hover:text-gray-900">Products</a>
-					<a href="/cart" class="text-gray-700 hover:text-gray-900">Cart</a>
+					<CartNavItem />
 					<a href="/debug" class="text-sm text-gray-500 hover:text-gray-700">Debug</a>
 				</div>
 			</div>

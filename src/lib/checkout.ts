@@ -1,21 +1,48 @@
-import { cookies } from "next/headers";
-import { CheckoutCreateDocument, CheckoutFindDocument } from "@/gql/graphql";
-import { executeGraphQL } from "@/lib/graphql";
+import { CheckoutCreateDocument, CheckoutFindDocument } from "../gql/graphql";
+import { executeGraphQL } from "./graphql";
+import { browser } from "$app/environment";
 
-export async function getIdFromCookies(channel: string) {
+export function getIdFromCookies(channel: string): string {
+	if (!browser) return "";
 	const cookieName = `checkoutId-${channel}`;
-	const checkoutId = (await cookies()).get(cookieName)?.value || "";
-	return checkoutId;
+	return getCookie(cookieName) || "";
 }
 
-export async function saveIdToCookie(channel: string, checkoutId: string) {
-	const shouldUseHttps =
-		process.env.NEXT_PUBLIC_STOREFRONT_URL?.startsWith("https") || !!process.env.NEXT_PUBLIC_VERCEL_URL;
+export function saveIdToCookie(channel: string, checkoutId: string) {
+	if (!browser) return;
 	const cookieName = `checkoutId-${channel}`;
-	(await cookies()).set(cookieName, checkoutId, {
+	setCookie(cookieName, checkoutId, {
 		sameSite: "lax",
-		secure: shouldUseHttps,
+		secure: window.location.protocol === "https:",
+		maxAge: 60 * 60 * 24 * 30, // 30 days
 	});
+}
+
+// Cookie utilities for browser
+function getCookie(name: string): string | null {
+	if (typeof document === "undefined") return null;
+	const value = `; ${document.cookie}`;
+	const parts = value.split(`; ${name}=`);
+	if (parts.length === 2) return parts.pop()?.split(";").shift() || null;
+	return null;
+}
+
+function setCookie(
+	name: string,
+	value: string,
+	options: {
+		sameSite?: string;
+		secure?: boolean;
+		maxAge?: number;
+	},
+) {
+	if (typeof document === "undefined") return;
+	let cookie = `${name}=${value}`;
+	if (options.maxAge) cookie += `; max-age=${options.maxAge}`;
+	if (options.sameSite) cookie += `; samesite=${options.sameSite}`;
+	if (options.secure) cookie += "; secure";
+	cookie += "; path=/";
+	document.cookie = cookie;
 }
 
 export async function find(checkoutId: string) {
