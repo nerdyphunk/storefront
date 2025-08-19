@@ -1,10 +1,10 @@
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fsaleor%2Fstorefront&env=NEXT_PUBLIC_SALEOR_API_URL&envDescription=Full%20Saleor%20GraphQL%20endpoint%20URL%2C%20eg%3A%20https%3A%2F%2Fstorefront1.saleor.cloud%2Fgraphql%2F&project-name=my-saleor-storefront&repository-name=my-saleor-storefront&demo-title=Saleor%20Next.js%20Storefront&demo-description=Starter%20pack%20for%20building%20performant%20e-commerce%20experiences%20with%20Saleor.&demo-url=https%3A%2F%2Fstorefront.saleor.io%2F&demo-image=https%3A%2F%2Fstorefront-d5h86wzey-saleorcommerce.vercel.app%2Fopengraph-image.png%3F4db0ee8cf66e90af)
-[![Storefront Demo](https://img.shields.io/badge/VIEW%20DEMO-DFDFDF?style=for-the-badge)](https://storefront.saleor.io)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fyour-username%2Fsaleor-sveltekit-storefront&env=PUBLIC_SALEOR_API_URL&envDescription=Full%20Saleor%20GraphQL%20endpoint%20URL%2C%20eg%3A%20https%3A%2F%2Fstorefront1.saleor.cloud%2Fgraphql%2F&project-name=my-saleor-storefront&repository-name=my-saleor-storefront&demo-title=Saleor%20SvelteKit%20Storefront&demo-description=Starter%20pack%20for%20building%20performant%20e-commerce%20experiences%20with%20Saleor%20and%20SvelteKit.)
 
-![Nextjs Storefront](./public/screenshot.png)
+> ⚡ **Migrated from Next.js to SvelteKit** - Modern, fast, and developer-friendly e-commerce storefront.
 
 <div align="center">
-  <h1>Saleor Next.js Storefront</h1>
+  <h1>Saleor SvelteKit Storefront</h1>
+  ⚡ Migrated from Next.js to SvelteKit ⚡<br/>
   Starter pack for building performant e-commerce experiences with <a href="https://github.com/saleor/saleor">Saleor</a>.
 </div>
 
@@ -31,14 +31,15 @@
 > [!TIP]
 > Questions or issues? Check our [Discord](https://saleor.io/discord) channel for help.
 
-## Features
+## ✨ Features
 
-- **Next.js 15**: File-based routing, React 19, Fast Refresh, Image Optimization and more.
-- **App Router**: Uses React Server Components, Data Cache, and async components.
-- **TypeScript**: Strongly typed codebase and GraphQL payloads with strict mode.
-- **GraphQL best practices**: Uses GraphQL Codegen and `TypedDocumentString` to reduce boilerplate and bundle size.
-- **Customizable CSS**: TailwindCSS can be extended or replaced with an alternative CSS solution.
-- **Tooling included**: Comes with ESLint, Prettier, Husky, Lint Staged, and Codegen preconfigured.
+- **SvelteKit**: File-based routing, modern build system with Vite, SSR/SSG support
+- **TypeScript**: Strongly typed codebase and GraphQL payloads with strict mode
+- **GraphQL best practices**: Uses GraphQL Codegen and `TypedDocumentString` to reduce boilerplate and bundle size
+- **TailwindCSS**: Utility-first CSS framework with full customization support
+- **Docker Support**: Compatible with both `docker-compose` and `docker compose`
+- **Modern tooling**: Prettier, Husky, Lint Staged, and Codegen preconfigured
+- **Performance**: Lightweight bundle size and fast SSR with SvelteKit
 
 **Global:**
 
@@ -67,7 +68,7 @@
 - Order completion
 - Order details
 
-## Quickstart
+## 🚀 Quick Start
 
 ### 1. Create Saleor backend instance
 
@@ -75,43 +76,43 @@ To quickly get started with the backend, use a free developer account at [Saleor
 
 Alternatively you can [run Saleor locally using docker](https://docs.saleor.io/docs/3.x/setup/docker-compose?utm_source=storefront&utm_medium=github).
 
-### 2. Clone storefront
-
-#### [Option 1] Using Comand line tools
-
-Install or update to the latest version of the [Saleor CLI](https://docs.saleor.io/docs/3.x/cli) by running the following command:
+### 2. Clone and setup storefront
 
 ```bash
-npm i -g @saleor/cli@latest
-```
+# Clone repository
+git clone <your-repo-url>
+cd saleor-storefront
 
-Clone storefront, install dependencies, and connect with the provided Saleor instance hostname
-
-```bash
-saleor storefront create --url https://{SALEOR_HOSTNAME}/graphql/
-```
-
-#### [Option 2] Manual install
-
-Clone repository:
-
-```bash
-git clone https://github.com/saleor/storefront.git
-```
-
-Copy environment variables from `.env.example` to `.env`:
-
-```bash
+# Setup environment
 cp .env.example .env
+# Edit .env and set PUBLIC_SALEOR_API_URL to your Saleor GraphQL endpoint
 ```
 
-Edit `.env` and set `NEXT_PUBLIC_SALEOR_API_URL` to your Saleor GraphQL endpoint URL, e.g., `https://example.saleor.cloud/graphql/`.
+### 3. Run the application
 
-Then, [install `pnpm`](https://pnpm.io/installation) and run the following command to install all dependencies in the repo:
+#### Option A: Docker (Recommended)
 
 ```bash
-pnpm i
+# Auto-detects docker-compose or docker compose
+./deploy.sh
+
+# Or using npm scripts
+pnpm run docker:deploy
 ```
+
+#### Option B: Local development
+
+```bash
+# Install dependencies
+pnpm install
+
+# Start development server
+pnpm run dev
+```
+
+🌐 **Open http://localhost:3000**
+
+📄 **See [QUICK_START.md](./QUICK_START.md) for detailed instructions**
 
 ## Payments
 
@@ -120,27 +121,61 @@ Currently, Saleor Storefront supports payments via the [Saleor Adyen App](https:
 > WARNING:
 > To configure the Adyen App, you must have an account with [Adyen](https://www.adyen.com/).
 
-## Development
-
-To start the development server, run the following:
+## 💻 Development
 
 ```bash
-pnpm dev
+# Start development server
+pnpm run dev
+
+# Build for production
+pnpm run build
+
+# Preview production build
+pnpm run preview
 ```
 
-The app is now running at `http://localhost:3000`.
+The app runs at `http://localhost:3000`.
 
-> NOTE:
-> Saleor Storefront is a Next.js app. In case you are not familiar with Next.js, we recommend you to read the [Next.js documentation](https://nextjs.org/docs) (make sure you've selected "Using App Router" in the sidebar).
+### GraphQL Code Generation
 
-#### GraphQL queries and mutations:
-
-After altering or creating new GraphQL queries in `gql` folder, you need to run the following command to generate types and javascript queries:
+After altering or creating new GraphQL queries in the `src/graphql` folder:
 
 ```bash
 pnpm run generate
 ```
 
-### Preview content changes instantly (Draft Mode)
+### Docker Management
 
-Visit `http://{your-host}/api/draft` to enable cookies that disable caching to preview catalog and content changes instantly. [Learn more about the Draft Mode in Next.js docs.](https://nextjs.org/docs/app/building-your-application/configuring/draft-mode)
+```bash
+./deploy.sh    # Deploy with auto-detection of docker compose version
+./status.sh    # Check container status
+./logs.sh      # View logs
+./stop.sh      # Stop containers
+```
+
+## 📦 Migration from Next.js
+
+This project has been migrated from Next.js to SvelteKit. See [MIGRATION.md](./MIGRATION.md) for details.
+
+**Key changes:**
+
+- ⚡ SvelteKit instead of Next.js
+- 🏠 Svelte components instead of React
+- 📦 Environment variables: `PUBLIC_*` instead of `NEXT_PUBLIC_*`
+- 🐳 Docker support for both `docker-compose` and `docker compose`
+
+---
+
+## 📁 Documentation
+
+- 🚀 [Quick Start Guide](./QUICK_START.md)
+- 🐳 [Deployment Guide](./DEPLOYMENT.md)
+- 🔄 [Migration Details](./MIGRATION.md)
+
+## ✨ What's New in SvelteKit Version
+
+- **Better Performance**: Smaller bundle size and faster SSR
+- **Modern DX**: Hot reload, TypeScript support, better dev tools
+- **Flexible Deployment**: Works with both Docker Compose versions
+- **Simplified State Management**: Reactive Svelte stores instead of complex React state
+- **Better SEO**: Built-in SSR/SSG support

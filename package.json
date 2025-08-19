@@ -14,7 +14,11 @@
 		"prepare": "is-ci || husky install",
 		"test": "playwright test",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"docker:deploy": "./deploy.sh",
+		"docker:stop": "./stop.sh",
+		"docker:logs": "./logs.sh",
+		"docker:status": "./status.sh"
 	},
 	"dependencies": {
 		"@adyen/adyen-web": "5.53.3",
