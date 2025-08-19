@@ -1,16 +1,21 @@
-version: "3"
-
 services:
   saleor-storefront:
     container_name: saleor-storefront
     build:
-      dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_SALEOR_API_URL: ${NEXT_PUBLIC_SALEOR_API_URL}
-        NEXT_PUBLIC_STOREFRONT_URL: ${NEXT_PUBLIC_STOREFRONT_URL}
+      context: .
+      dockerfile: Dockerfile.sveltekit
+    environment:
+      - NODE_ENV=production
+      - PUBLIC_SALEOR_API_URL=${PUBLIC_SALEOR_API_URL}
+      - PUBLIC_STOREFRONT_URL=${PUBLIC_STOREFRONT_URL}
     restart: always
     ports:
-      - 3000:3000
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     networks:
       - saleor_network
 

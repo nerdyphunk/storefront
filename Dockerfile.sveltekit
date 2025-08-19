@@ -1,7 +1,9 @@
 FROM node:18-alpine AS base
 
-# Install pnpm
-RUN corepack enable pnpm
+# Install pnpm and git
+RUN corepack enable pnpm && \
+    corepack install -g pnpm@10.14.0 && \
+    apk add --no-cache git wget
 
 # Build stage
 FROM base AS build
@@ -17,8 +19,11 @@ RUN pnpm install --frozen-lockfile
 # Copy source code
 COPY . .
 
-# Build application
-RUN pnpm run build
+# Update browserslist database
+RUN npx update-browserslist-db@latest
+
+# Build application (skip husky install in Docker)
+RUN HUSKY=0 pnpm run build
 
 # Production stage
 FROM base AS production

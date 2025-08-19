@@ -12,6 +12,9 @@ fi
 
 # Build and start with Docker Compose
 echo "🏗️  Building Docker image..."
+echo "📦 Updating browserslist database..."
+npx update-browserslist-db@latest 2>/dev/null || echo "⚠️  Could not update browserslist (not critical)"
+
 docker-compose -f docker-compose.prod.yml build
 
 echo "🚀 Starting application..."
