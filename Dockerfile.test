@@ -33,20 +33,22 @@ COPY .env.test .env
 # Генерируем GraphQL типы
 RUN pnpm run generate
 
-# Собираем приложение для тестирования
-RUN pnpm run build:test
+# Устанавливаем Docker конфигурацию и собираем приложение
+RUN cp svelte.config.docker.js svelte.config.js && pnpm run build:test
 
 # Финальный stage для запуска тестов
 FROM dependencies AS test
 
-# Копируем собранное приложение
+# Копируем собранное приложение (Node адаптер создаёт папку build)
 COPY --from=build-stage /app/build ./build/
 COPY --from=build-stage /app/.svelte-kit ./.svelte-kit/
 COPY --from=build-stage /app/src ./src/
 COPY --from=build-stage /app/__tests__ ./__tests__/
 COPY --from=build-stage /app/playwright.config.ts ./
+COPY --from=build-stage /app/playwright.config.docker.ts ./
 COPY --from=build-stage /app/.env.test ./
 COPY --from=build-stage /app/package.json ./
+COPY --from=build-stage /app/svelte.config.js ./
 
 # Создаем non-root пользователя
 RUN addgroup --system --gid 1001 nodejs && \
@@ -71,4 +73,22 @@ HEALTHCHECK --interval=10s --timeout=5s --start-period=30s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:3000 || exit 1
 
 # Скрипт для запуска приложения и выполнения тестов
-CMD ["sh", "-c", "node build & sleep 10 && pnpm test"]
+CMD ["sh", "-c", "\  
+  echo 'Запуск приложения...' && \  
+  node build/index.js & \  
+  APP_PID=$! && \  
+  echo 'Ожидание готовности приложения...' && \  
+  for i in \$(seq 1 30); do \  
+    if wget --no-verbose --tries=1 --spider http://localhost:3000 2>/dev/null; then \  
+      echo 'Приложение готово!'; \  
+      break; \  
+    fi; \  
+    echo -n '.'; \  
+    sleep 2; \  
+  done && \  
+  echo 'Запуск тестов...' && \  
+  pnpm test; \  
+  TEST_EXIT_CODE=$?; \  
+  kill $APP_PID 2>/dev/null || true; \  
+  exit $TEST_EXIT_CODE \  
+"]
