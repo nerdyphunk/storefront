@@ -34,9 +34,13 @@
 					<a href="/products" class="rounded bg-gray-200 px-6 py-3 text-gray-800 hover:bg-gray-300">
 						Continue Shopping
 					</a>
-					<button class="rounded bg-blue-600 px-6 py-3 text-white hover:bg-blue-700">
+					<a
+						href="/checkout"
+						class="inline-block rounded bg-blue-600 px-6 py-3 text-white hover:bg-blue-700"
+						data-testid="CheckoutLink"
+					>
 						Proceed to Checkout
-					</button>
+					</a>
 				</div>
 			{:else}
 				<div class="py-8 text-center">
