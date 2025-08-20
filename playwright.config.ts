@@ -23,13 +23,17 @@ const testConfig = {
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 2 : 0,
 	reporter: process.env.CI ? [["html"], ["github"], ["list"]] : [["html"], ["list"]],
-	timeout: 60 * 1000,
+	timeout: 90 * 1000, // Увеличиваем timeout для большей стабильности
+	globalTimeout: 10 * 60 * 1000, // 10 минут общий таймаут
 
 	use: {
 		baseURL,
 		trace: "on-first-retry",
 		screenshot: process.env.CI ? "only-on-failure" : "off",
 		video: process.env.CI ? "retain-on-failure" : "off",
+		// Увеличиваем таймауты для большей стабильности
+		actionTimeout: 15 * 1000,
+		navigationTimeout: 30 * 1000,
 	},
 
 	projects: [
@@ -60,7 +64,7 @@ if (!process.env.BASE_URL) {
 		command: "pnpm run dev",
 		url: baseURL,
 		reuseExistingServer: !process.env.CI,
-		timeout: 120_000,
+		timeout: 180_000, // 3 минуты для запуска
 		env: {
 			NODE_ENV: "development",
 			// Inherit other environment variables

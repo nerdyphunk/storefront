@@ -1,0 +1,34 @@
+# Docker Compose для тестирования
+services:
+  saleor-storefront-test:
+    container_name: saleor-storefront-test
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    environment:
+      - NODE_ENV=test
+      - PUBLIC_SALEOR_API_URL=${PUBLIC_SALEOR_API_URL:-https://store-qdjgu50o.eu.saleor.cloud/graphql/}
+      - PUBLIC_STOREFRONT_URL=http://localhost:3000
+      - PORT=3000
+      - DEBUG=false
+      - CI=true
+    ports:
+      - "3000:3000"
+    volumes:
+      # Монтируем результаты тестов
+      - ./test-results:/app/test-results
+      - ./playwright-report:/app/playwright-report
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - test_network
+    # Контейнер остановится после выполнения тестов
+    restart: "no"
+
+networks:
+  test_network:
+    driver: bridge

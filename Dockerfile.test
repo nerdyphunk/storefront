@@ -1,0 +1,74 @@
+# Multi-stage Dockerfile для тестирования
+FROM node:20-alpine AS base
+
+# Устанавливаем pnpm, git и системные зависимости для Playwright
+RUN corepack enable pnpm && \
+    corepack install -g pnpm@10.14.0 && \
+    apk add --no-cache git wget chromium nss freetype freetype-dev harfbuzz ca-certificates ttf-freefont
+
+# Устанавливаем переменные среды для Playwright
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
+WORKDIR /app
+
+# Stage для установки всех зависимостей включая dev-dependencies
+FROM base AS dependencies
+
+# Копируем файлы конфигурации пакетов
+COPY package.json pnpm-lock.yaml ./
+
+# Устанавливаем все зависимости включая dev dependencies
+RUN pnpm install --frozen-lockfile
+
+# Stage для сборки приложения
+FROM dependencies AS build-stage
+
+# Копируем исходный код
+COPY . .
+
+# Копируем тестовую конфигурацию среды
+COPY .env.test .env
+
+# Генерируем GraphQL типы
+RUN pnpm run generate
+
+# Собираем приложение для тестирования
+RUN pnpm run build:test
+
+# Финальный stage для запуска тестов
+FROM dependencies AS test
+
+# Копируем собранное приложение
+COPY --from=build-stage /app/build ./build/
+COPY --from=build-stage /app/.svelte-kit ./.svelte-kit/
+COPY --from=build-stage /app/src ./src/
+COPY --from=build-stage /app/__tests__ ./__tests__/
+COPY --from=build-stage /app/playwright.config.ts ./
+COPY --from=build-stage /app/.env.test ./
+COPY --from=build-stage /app/package.json ./
+
+# Создаем non-root пользователя
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 sveltekit
+
+# Создаем директории для результатов тестов
+RUN mkdir -p test-results playwright-report && \
+    chown -R sveltekit:nodejs /app
+
+USER sveltekit
+
+# Экспонируем порт
+EXPOSE 3000
+
+# Устанавливаем переменные среды
+ENV NODE_ENV=test
+ENV PORT=3000
+ENV CI=true
+
+# Healthcheck для проверки готовности приложения
+HEALTHCHECK --interval=10s --timeout=5s --start-period=30s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:3000 || exit 1
+
+# Скрипт для запуска приложения и выполнения тестов
+CMD ["sh", "-c", "node build & sleep 10 && pnpm test"]
