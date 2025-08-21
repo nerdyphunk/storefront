@@ -41,13 +41,13 @@ start_local() {
     echo "🚀 Starting local development server ($ENV)..."
     case $ENV in
         development)
-            pnpm exec dotenv -e .env.development -- pnpm run dev
+            pnpm exec dotenv-cli -e .env.development -- pnpm run dev
             ;;
         production)
-            pnpm run build:production && pnpm exec dotenv -e .env.production -- pnpm run start
+            pnpm run build:production && pnpm exec dotenv-cli -e .env.production -- pnpm run start
             ;;
         test)
-            pnpm exec dotenv -e .env.test -- pnpm run build && pnpm exec dotenv -e .env.test -- pnpm run start
+            pnpm exec dotenv-cli -e .env.test -- pnpm run build && pnpm exec dotenv-cli -e .env.test -- pnpm run start
             ;;
         *)
             echo "❌ Unknown environment: $ENV"
@@ -65,13 +65,13 @@ build_project() {
     echo "🏗️  Building project ($ENV)..."
     case $ENV in
         development)
-            pnpm exec dotenv -e .env.development -- pnpm run build
+            pnpm exec dotenv-cli -e .env.development -- pnpm run build
             ;;
         production)
             pnpm run build:production
             ;;
         test)
-            pnpm exec dotenv -e .env.test -- pnpm run build
+            pnpm exec dotenv-cli -e .env.test -- pnpm run build
             ;;
         *)
             echo "❌ Unknown environment: $ENV"
@@ -92,13 +92,13 @@ run_tests() {
     
     case $ENV in
         local)
-            pnpm exec dotenv -e .env.test -- pnpm exec playwright test
+            pnpm exec dotenv-cli -e .env.test -- pnpm exec playwright test
             ;;
         docker)
-            BASE_URL=http://localhost:3000 pnpm exec dotenv -e .env.test -- pnpm exec playwright test
+            BASE_URL=http://localhost:3000 pnpm exec dotenv-cli -e .env.test -- pnpm exec playwright test
             ;;
         *)
-            pnpm exec dotenv -e .env.test -- pnpm exec playwright test
+            pnpm exec dotenv-cli -e .env.test -- pnpm exec playwright test
             ;;
     esac
 }
