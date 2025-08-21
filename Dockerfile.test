@@ -72,23 +72,8 @@ ENV CI=true
 HEALTHCHECK --interval=10s --timeout=5s --start-period=30s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:3000 || exit 1
 
-# Скрипт для запуска приложения и выполнения тестов
-CMD ["sh", "-c", "\  
-  echo 'Запуск приложения...' && \  
-  node build/index.js & \  
-  APP_PID=$! && \  
-  echo 'Ожидание готовности приложения...' && \  
-  for i in \$(seq 1 30); do \  
-    if wget --no-verbose --tries=1 --spider http://localhost:3000 2>/dev/null; then \  
-      echo 'Приложение готово!'; \  
-      break; \  
-    fi; \  
-    echo -n '.'; \  
-    sleep 2; \  
-  done && \  
-  echo 'Запуск тестов...' && \  
-  pnpm test; \  
-  TEST_EXIT_CODE=$?; \  
-  kill $APP_PID 2>/dev/null || true; \  
-  exit $TEST_EXIT_CODE \  
-"]
+# Создаем скрипт запуска
+RUN echo '#!/bin/sh\n\necho "Запуск приложения..."\nnode build/index.js &\nAPP_PID=$!\n\necho "Ожидание готовности приложения..."\nfor i in $(seq 1 30); do\n  if wget --no-verbose --tries=1 --spider http://localhost:3000 2>/dev/null; then\n    echo "Приложение готово!"\n    break\n  fi\n  echo -n "."\n  sleep 2\ndone\n\necho "Запуск тестов..."\npnpm test\nTEST_EXIT_CODE=$?\n\necho "Остановка приложения..."\nkill $APP_PID 2>/dev/null || true\nexit $TEST_EXIT_CODE' > /app/start-tests.sh && chmod +x /app/start-tests.sh
+
+# Запуск через скрипт
+CMD ["/app/start-tests.sh"]
