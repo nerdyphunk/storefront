@@ -49,34 +49,14 @@ COPY --from=build-stage /app/playwright.config.docker.ts ./
 COPY --from=build-stage /app/.env.test ./
 COPY --from=build-stage /app/package.json ./
 COPY --from=build-stage /app/svelte.config.js ./
+COPY --from=build-stage /app/start-tests.sh ./start-tests.sh
 
 # Создаем non-root пользователя
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 sveltekit
 
-# Создаем директории для результатов тестов и создаем скрипт запуска
+# Создаем директории для результатов тестов и устанавливаем права
 RUN mkdir -p test-results playwright-report && \
-    echo '#!/bin/sh' > /app/start-tests.sh && \
-    echo 'set -e' >> /app/start-tests.sh && \
-    echo 'echo "Запуск приложения..."' >> /app/start-tests.sh && \
-    echo 'node build/index.js &' >> /app/start-tests.sh && \
-    echo 'APP_PID=$!' >> /app/start-tests.sh && \
-    echo 'echo "Ожидание готовности приложения..."' >> /app/start-tests.sh && \
-    echo 'for i in \$(seq 1 30); do' >> /app/start-tests.sh && \
-    echo '  if wget --no-verbose --tries=1 --spider http://localhost:3000 >/dev/null 2>&1; then' >> /app/start-tests.sh && \
-    echo '    echo "Приложение готово!"' >> /app/start-tests.sh && \
-    echo '    break' >> /app/start-tests.sh && \
-    echo '  fi' >> /app/start-tests.sh && \
-    echo '  echo -n "."' >> /app/start-tests.sh && \
-    echo '  sleep 2' >> /app/start-tests.sh && \
-    echo 'done' >> /app/start-tests.sh && \
-    echo 'echo' >> /app/start-tests.sh && \
-    echo 'echo "Запуск тестов..."' >> /app/start-tests.sh && \
-    echo 'pnpm test' >> /app/start-tests.sh && \
-    echo 'TEST_EXIT_CODE=$?' >> /app/start-tests.sh && \
-    echo 'echo "Остановка приложения..."' >> /app/start-tests.sh && \
-    echo 'kill \$APP_PID 2>/dev/null || true' >> /app/start-tests.sh && \
-    echo 'exit \$TEST_EXIT_CODE' >> /app/start-tests.sh && \
     chmod +x /app/start-tests.sh && \
     chown -R sveltekit:nodejs /app
 
