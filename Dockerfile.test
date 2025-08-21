@@ -46,6 +46,7 @@ COPY --from=build-stage /app/src ./src/
 COPY --from=build-stage /app/__tests__ ./__tests__/
 COPY --from=build-stage /app/playwright.config.ts ./
 COPY --from=build-stage /app/playwright.config.docker.ts ./
+COPY --from=build-stage /app/playwright.config.container.ts ./
 COPY --from=build-stage /app/.env.test ./
 COPY --from=build-stage /app/package.json ./
 COPY --from=build-stage /app/svelte.config.js ./

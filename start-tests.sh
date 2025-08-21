@@ -17,7 +17,8 @@ done
 echo
 
 echo "Запуск тестов..."
-pnpm test
+# Используем специальную конфигурацию для контейнера
+BASE_URL=http://localhost:3000 pnpm exec playwright test --config=playwright.config.container.ts
 TEST_EXIT_CODE=$?
 
 echo "Остановка приложения..."
