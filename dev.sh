@@ -14,9 +14,9 @@ show_help() {
     echo ""
     echo "Commands:"
     echo "  start [env]     - Start development server"
-    echo "  docker [env]    - Start in Docker"
+    echo "  docker [env]    - Start in Docker (test env runs tests)"
     echo "  build [env]     - Build for production"
-    echo "  test [env]      - Run tests"
+    echo "  test [env]      - Run tests locally"
     echo "  stop [env]      - Stop Docker containers"
     echo "  logs [env]      - Show Docker logs"
     echo "  status          - Show Docker container status"
@@ -33,7 +33,8 @@ show_help() {
     echo "  ./dev.sh start                    # Start local dev server"
     echo "  ./dev.sh docker development       # Start dev Docker container"
     echo "  ./dev.sh docker production        # Start prod Docker container"
-    echo "  ./dev.sh test                     # Run tests"
+    echo "  ./dev.sh docker test              # Run tests in Docker"
+    echo "  ./dev.sh test                     # Run tests locally"
     echo "  ./dev.sh build production         # Build for production"
 }
 
@@ -57,8 +58,13 @@ start_local() {
 }
 
 start_docker() {
-    echo "🐳 Starting Docker containers ($ENV)..."
-    ./deploy.sh $ENV
+    if [ "$ENV" = "test" ]; then
+        echo "🧪 Running Docker tests..."
+        ./test-docker.sh
+    else
+        echo "🐳 Starting Docker containers ($ENV)..."
+        ./deploy.sh $ENV
+    fi
 }
 
 build_project() {
