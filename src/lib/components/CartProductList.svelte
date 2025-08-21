@@ -33,7 +33,7 @@
 				<div class="flex items-center space-x-4">
 					{#if line.totalPrice?.gross}
 						<span class="font-medium">
-							{line.totalPrice.gross.amount}
+							{Number(line.totalPrice.gross.amount).toFixed(2)}
 							{line.totalPrice.gross.currency}
 						</span>
 					{/if}
@@ -50,7 +50,7 @@
 		<div class="mt-6 border-t pt-4">
 			<div class="flex justify-between text-xl font-bold">
 				<span>Total:</span>
-				<span>{checkout.totalPrice.gross.amount} {checkout.totalPrice.gross.currency}</span>
+				<span>{Number(checkout.totalPrice.gross.amount).toFixed(2)} {checkout.totalPrice.gross.currency}</span>
 			</div>
 		</div>
 	{/if}
