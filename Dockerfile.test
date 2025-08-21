@@ -54,8 +54,30 @@ COPY --from=build-stage /app/svelte.config.js ./
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 sveltekit
 
-# Создаем директории для результатов тестов
+# Создаем директории для результатов тестов и создаем скрипт запуска
 RUN mkdir -p test-results playwright-report && \
+    echo '#!/bin/sh' > /app/start-tests.sh && \
+    echo 'set -e' >> /app/start-tests.sh && \
+    echo 'echo "Запуск приложения..."' >> /app/start-tests.sh && \
+    echo 'node build/index.js &' >> /app/start-tests.sh && \
+    echo 'APP_PID=$!' >> /app/start-tests.sh && \
+    echo 'echo "Ожидание готовности приложения..."' >> /app/start-tests.sh && \
+    echo 'for i in \$(seq 1 30); do' >> /app/start-tests.sh && \
+    echo '  if wget --no-verbose --tries=1 --spider http://localhost:3000 >/dev/null 2>&1; then' >> /app/start-tests.sh && \
+    echo '    echo "Приложение готово!"' >> /app/start-tests.sh && \
+    echo '    break' >> /app/start-tests.sh && \
+    echo '  fi' >> /app/start-tests.sh && \
+    echo '  echo -n "."' >> /app/start-tests.sh && \
+    echo '  sleep 2' >> /app/start-tests.sh && \
+    echo 'done' >> /app/start-tests.sh && \
+    echo 'echo' >> /app/start-tests.sh && \
+    echo 'echo "Запуск тестов..."' >> /app/start-tests.sh && \
+    echo 'pnpm test' >> /app/start-tests.sh && \
+    echo 'TEST_EXIT_CODE=$?' >> /app/start-tests.sh && \
+    echo 'echo "Остановка приложения..."' >> /app/start-tests.sh && \
+    echo 'kill \$APP_PID 2>/dev/null || true' >> /app/start-tests.sh && \
+    echo 'exit \$TEST_EXIT_CODE' >> /app/start-tests.sh && \
+    chmod +x /app/start-tests.sh && \
     chown -R sveltekit:nodejs /app
 
 USER sveltekit
@@ -71,9 +93,6 @@ ENV CI=true
 # Healthcheck для проверки готовности приложения
 HEALTHCHECK --interval=10s --timeout=5s --start-period=30s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:3000 || exit 1
-
-# Создаем скрипт запуска
-RUN echo '#!/bin/sh\n\necho "Запуск приложения..."\nnode build/index.js &\nAPP_PID=$!\n\necho "Ожидание готовности приложения..."\nfor i in $(seq 1 30); do\n  if wget --no-verbose --tries=1 --spider http://localhost:3000 2>/dev/null; then\n    echo "Приложение готово!"\n    break\n  fi\n  echo -n "."\n  sleep 2\ndone\n\necho "Запуск тестов..."\npnpm test\nTEST_EXIT_CODE=$?\n\necho "Остановка приложения..."\nkill $APP_PID 2>/dev/null || true\nexit $TEST_EXIT_CODE' > /app/start-tests.sh && chmod +x /app/start-tests.sh
 
 # Запуск через скрипт
 CMD ["/app/start-tests.sh"]
