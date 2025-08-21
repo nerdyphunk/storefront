@@ -28,9 +28,9 @@ const testConfig = {
 
 	use: {
 		baseURL,
-		trace: "retain-on-failure",
-		screenshot: "only-on-failure",
-		video: "retain-on-failure",
+		trace: "off", // Отключаем trace для стабиль
+		screenshot: "off", // Отключаем скриншоты
+		video: "off", // Отключаем видео для решения проблемы с ffmpeg
 		actionTimeout: 15 * 1000,
 		navigationTimeout: 30 * 1000,
 	},
