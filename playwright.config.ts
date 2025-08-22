@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 import { config } from "dotenv";
-import fs from "fs";
+import * as fs from "fs";
 import { execSync } from "child_process";
 
 // Load environment-specific config
@@ -24,7 +24,7 @@ const testConfig = {
 	workers: process.env.CI ? 3 : undefined,
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 2 : 0,
-	reporter: process.env.CI ? [["html"], ["github"], ["list"]] : [["html"], ["list"]],
+	reporter: process.env.CI ? [["html"], ["github"], ["list"]] as any : [["html"], ["list"]] as any,
 	timeout: 90 * 1000, // Увеличиваем timeout для большей стабильности
 	globalTimeout: 10 * 60 * 1000, // 10 минут общий таймаут
 
@@ -87,4 +87,4 @@ if (!process.env.BASE_URL) {
 	};
 }
 
-export default defineConfig(testConfig);
+export default defineConfig(testConfig as any);
