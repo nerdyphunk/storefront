@@ -85,11 +85,12 @@ test.describe("Products Page Lazy Loading", () => {
 		// Button should be enabled initially
 		await expect(loadMoreButton).toBeEnabled();
 
-		// Click and check if disabled
-		await loadMoreButton.click();
+		// Click and immediately check if disabled (use race condition to catch loading state)
+		const clickPromise = loadMoreButton.click();
+		const disablePromise = expect(loadMoreButton).toBeDisabled();
 		
-		// Button should be disabled while loading
-		await expect(loadMoreButton).toBeDisabled();
+		// Execute both simultaneously to catch the brief loading state
+		await Promise.all([clickPromise, disablePromise]);
 		
 		// Wait for loading to complete
 		await expect(page.locator('text=Loading more products')).toBeHidden({ timeout: 10000 });
