@@ -21,6 +21,9 @@ echo "📊 Checking application status..."
 $DOCKER_COMPOSE_CMD -f docker-compose.prod.yml ps
 
 echo ""
-echo "🌐 If running, application should be available at: http://localhost:3000"
+echo "🌐 Applications should be available at:"
+echo "  Development:  http://localhost:3000"
+echo "  Production:   http://localhost:3001"
+echo "  Test:         http://localhost:3002"
 echo "📝 To view logs: ./logs.sh"
 echo "🛑 To stop: ./stop.sh"

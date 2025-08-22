@@ -25,9 +25,9 @@ show_help() {
     echo "  help            - Show this help"
     echo ""
     echo "Environments:"
-    echo "  development     - Local development (default)"
-    echo "  production      - Production build"
-    echo "  test            - Testing environment"
+    echo "  development     - Local development (port 3000)"
+    echo "  production      - Production build (port 3001)"
+    echo "  test            - Testing environment (port 3002)"
     echo ""
     echo "Examples:"
     echo "  ./dev.sh start                    # Start local dev server"
@@ -101,7 +101,18 @@ run_tests() {
             pnpm exec dotenv -e .env.test -- pnpm exec playwright test
             ;;
         docker)
-            BASE_URL=http://localhost:3000 pnpm exec dotenv -e .env.test -- pnpm exec playwright test
+            # Use correct port based on environment
+            case "$ENV" in
+                test)
+                    BASE_URL=http://localhost:3002 pnpm exec dotenv -e .env.test -- pnpm exec playwright test
+                    ;;
+                production)
+                    BASE_URL=http://localhost:3001 pnpm exec dotenv -e .env.test -- pnpm exec playwright test
+                    ;;
+                *)
+                    BASE_URL=http://localhost:3000 pnpm exec dotenv -e .env.test -- pnpm exec playwright test
+                    ;;
+            esac
             ;;
         *)
             pnpm exec dotenv -e .env.test -- pnpm exec playwright test

@@ -62,7 +62,22 @@ $DOCKER_COMPOSE_CMD -f "$COMPOSE_FILE" up -d
 
 echo "✅ Deployment complete!"
 echo "🌍 Environment: $ENV"
-echo "🌐 Application available at: http://localhost:3000"
+
+# Display correct port based on environment
+case $ENV in
+    development)
+        echo "🌐 Application available at: http://localhost:3000"
+        ;;
+    production)
+        echo "🌐 Application available at: http://localhost:3001"
+        ;;
+    test)
+        echo "🌐 Application available at: http://localhost:3002"
+        ;;
+    *)
+        echo "🌐 Application available at: http://localhost:3000"
+        ;;
+esac
 echo "📊 Check status with: $DOCKER_COMPOSE_CMD -f $COMPOSE_FILE ps"
 echo "📝 View logs with: $DOCKER_COMPOSE_CMD -f $COMPOSE_FILE logs -f"
 

@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile.sveltekit
     ports:
-      - "3000:3000"
+      - "3001:3000"
     environment:
       - NODE_ENV=production
       - PUBLIC_SALEOR_API_URL=${PUBLIC_SALEOR_API_URL}

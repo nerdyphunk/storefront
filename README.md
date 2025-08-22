@@ -124,7 +124,10 @@ pnpm run dev:local
 vercel --prod
 ```
 
-🌐 **Open http://localhost:3000**
+🌐 **Applications available at:**
+- Development: http://localhost:3000
+- Production:  http://localhost:3001  
+- Test:        http://localhost:3002
 
 📖 **See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for complete instructions**
 
@@ -148,7 +151,10 @@ pnpm run build
 pnpm run preview
 ```
 
-The app runs at `http://localhost:3000`.
+The app runs at different ports:
+- **Development**: `http://localhost:3000`
+- **Production**: `http://localhost:3001`
+- **Test**: `http://localhost:3002`
 
 ### GraphQL Code Generation
 

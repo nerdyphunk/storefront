@@ -24,7 +24,7 @@ services:
       timeout: 10s
       retries: 3
     networks:
-      - saleor_network
+      - development_network
 
   # Optional: Add development tools
   # adminer:
@@ -33,8 +33,8 @@ services:
   #   ports:
   #     - "8080:8080"
   #   networks:
-  #     - saleor_network
+  #     - development_network
 
 networks:
-  saleor_network:
+  development_network:
     external: false
