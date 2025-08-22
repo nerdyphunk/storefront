@@ -199,3 +199,36 @@ This project has been migrated from Next.js to SvelteKit. See [MIGRATION.md](./M
 - **Flexible Deployment**: Works with both Docker Compose versions
 - **Simplified State Management**: Reactive Svelte stores instead of complex React state
 - **Better SEO**: Built-in SSR/SSG support
+
+## 🚀 Multi-Environment Setup
+
+This storefront supports running multiple environments simultaneously without conflicts:
+
+### Available Environments
+- **Development**: http://localhost:3000
+- **Production**: http://localhost:3001
+- **Test**: http://localhost:3002
+
+### Quick Commands
+```bash
+# Start all environments simultaneously
+./dev.sh docker development  # Runs on port 3000
+./dev.sh docker production   # Runs on port 3001
+./dev.sh docker test          # Runs tests on port 3002
+
+# Check status of all containers
+./dev.sh status
+
+# Stop specific environment
+./dev.sh stop development
+./dev.sh stop production
+./dev.sh stop test
+```
+
+### Environment Configuration
+Each environment has its own configuration:
+- `.env.development` → port 3000
+- `.env.production` → port 3001
+- `.env.test` → port 3002
+
+All environments use separate Docker networks and container names to avoid conflicts.
