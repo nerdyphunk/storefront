@@ -24,7 +24,7 @@ const testConfig = {
 	workers: process.env.CI ? 3 : undefined,
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 2 : 0,
-	reporter: process.env.CI ? [["html"], ["github"], ["list"]] as any : [["html"], ["list"]] as any,
+	reporter: process.env.CI ? ([["html"], ["github"], ["list"]] as any) : ([["html"], ["list"]] as any),
 	timeout: 90 * 1000, // Увеличиваем timeout для большей стабильности
 	globalTimeout: 10 * 60 * 1000, // 10 минут общий таймаут
 
@@ -60,32 +60,40 @@ const testConfig = {
 };
 
 // Auto-detect package manager
-let devCommand = 'npm run dev';
+let packageManager = "npm";
+let devCommand = "npm run dev";
+
 try {
 	// Check if pnpm is available
-	execSync('which pnpm', { stdio: 'ignore' });
-	if (fs.existsSync('pnpm-lock.yaml')) {
-		devCommand = 'pnpm run dev';
+	execSync("which pnpm", { stdio: "ignore" });
+	if (fs.existsSync("pnpm-lock.yaml")) {
+		packageManager = "pnpm";
+		devCommand = "pnpm run dev";
 	}
 } catch (e) {
 	// Fall back to npm if pnpm not available
-	console.log('PNPM not found, using npm');
-	devCommand = 'npm run dev';
+	console.log("PNPM not found, using npm");
+	devCommand = "npm run dev";
+}
+
+// For test environment, we need to use the correct dotenv command
+if (NODE_ENV === "test") {
+	const dotenvCmd = packageManager === "pnpm" ? "pnpm exec dotenv" : "npx dotenv";
+	devCommand = `${dotenvCmd} -e .env.test -- ${packageManager} run dev`;
 }
 
 // Web server configuration (only if BASE_URL is not set)
 if (!process.env.BASE_URL) {
-	
 	// Auto-start development server for tests
 	(testConfig as any).webServer = {
 		command: devCommand,
 		url: baseURL,
 		reuseExistingServer: !process.env.CI,
 		timeout: 120_000, // 2 minutes for startup
-		stdout: 'pipe',
-		stderr: 'pipe'
+		stdout: "pipe",
+		stderr: "pipe",
 		env: {
-			NODE_ENV: "development",
+			NODE_ENV: NODE_ENV,
 			// Inherit other environment variables
 			...process.env,
 		},
