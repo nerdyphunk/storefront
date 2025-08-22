@@ -46,18 +46,40 @@ export const load: PageLoad = async ({ fetch }) => {
 		return {
 			products: [
 				{
+					__typename: "Product" as const,
 					id: "mock-1",
 					name: "API Connection Issue",
 					slug: "api-issue",
 					thumbnail: {
+						__typename: "Image" as const,
 						url: "https://via.placeholder.com/300x300?text=Check+API",
 						alt: "Check API Configuration",
 					},
-					category: { name: "System" },
+					category: { 
+						__typename: "Category" as const,
+						id: "system-cat",
+						name: "System" 
+					},
 					pricing: {
+						__typename: "ProductPricingInfo" as const,
 						priceRange: {
-							start: { gross: { amount: 0, currency: "USD" } },
-							stop: { gross: { amount: 0, currency: "USD" } },
+							__typename: "TaxedMoneyRange" as const,
+							start: { 
+								__typename: "TaxedMoney" as const,
+								gross: { 
+									__typename: "Money" as const,
+									amount: 0, 
+									currency: "USD" 
+								} 
+							},
+							stop: { 
+								__typename: "TaxedMoney" as const,
+								gross: { 
+									__typename: "Money" as const,
+									amount: 0, 
+									currency: "USD" 
+								} 
+							},
 						},
 					},
 				},

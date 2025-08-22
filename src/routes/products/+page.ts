@@ -6,9 +6,9 @@ export const load: PageLoad = async ({ url }) => {
 	try {
 		const channel = "default-channel";
 
-		// Get pagination parameters from URL
-		const first = parseInt(url.searchParams.get("first") || "12");
-		const after = url.searchParams.get("after") || undefined;
+		// Only load first page on initial page load (ignore URL pagination parameters)
+		const first = 12;
+		const after = undefined; // Always start from the beginning
 
 		const data = await executeGraphQL(ProductListPaginatedDocument, {
 			variables: {
@@ -37,3 +37,7 @@ export const load: PageLoad = async ({ url }) => {
 		};
 	}
 };
+
+
+// Disable prerendering for this page since we use dynamic content loading
+export const prerender = false;
