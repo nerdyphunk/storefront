@@ -59,9 +59,23 @@ const testConfig = {
 
 // Web server configuration (only if BASE_URL is not set)
 if (!process.env.BASE_URL) {
+	// Auto-detect package manager and start development server for tests
+	const fs = require('fs');
+	let command = 'npm run dev';
+	
+	// Try to detect available package manager
+	try {
+		if (fs.existsSync('pnpm-lock.yaml') && require('child_process').execSync('which pnpm', { stdio: 'ignore' })) {
+			command = 'pnpm run dev';
+		}
+	} catch (e) {
+		// Fall back to npm if pnpm not available
+		command = 'npm run dev';
+	}
+	
 	// Auto-start development server for tests
 	(testConfig as any).webServer = {
-		command: "pnpm run dev",
+		command,
 		url: baseURL,
 		reuseExistingServer: !process.env.CI,
 		timeout: 180_000, // 3 минуты для запуска
