@@ -62,11 +62,14 @@ const testConfig = {
 // Auto-detect package manager
 let devCommand = 'npm run dev';
 try {
-	if (fs.existsSync('pnpm-lock.yaml') && execSync('which pnpm', { stdio: 'ignore' })) {
+	// Check if pnpm is available
+	execSync('which pnpm', { stdio: 'ignore' });
+	if (fs.existsSync('pnpm-lock.yaml')) {
 		devCommand = 'pnpm run dev';
 	}
 } catch (e) {
 	// Fall back to npm if pnpm not available
+	console.log('PNPM not found, using npm');
 	devCommand = 'npm run dev';
 }
 
@@ -78,7 +81,9 @@ if (!process.env.BASE_URL) {
 		command: devCommand,
 		url: baseURL,
 		reuseExistingServer: !process.env.CI,
-		timeout: 180_000, // 3 минуты для запуска
+		timeout: 120_000, // 2 minutes for startup
+		stdout: 'pipe',
+		stderr: 'pipe'
 		env: {
 			NODE_ENV: "development",
 			// Inherit other environment variables

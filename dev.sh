@@ -110,6 +110,21 @@ run_tests() {
         echo "✅ Playwright browsers installed!"
     fi
     
+    # Check if development server is running (for local tests)
+    if [ "$ENV" = "development" ] || [ "$ENV" = "local" ]; then
+        echo "ℹ️  For local tests, make sure dev server is running:"
+        echo "   Run: $PKG_MANAGER run dev:local (in another terminal)"
+        echo "   Or use: ./dev.sh docker test (for full Docker test suite)"
+        echo ""
+        
+        # Quick check if server is responding
+        if ! curl -s http://localhost:3000 > /dev/null 2>&1; then
+            echo "⚠️  Development server not detected on http://localhost:3000"
+            echo "   Tests will try to start their own server (may take time)"
+            echo ""
+        fi
+    fi
+    
     case $ENV in
         local)
             $PKG_EXEC dotenv -e .env.test -- $PKG_EXEC playwright test
