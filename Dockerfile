@@ -19,52 +19,46 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the build.
-# ENV NEXT_TELEMETRY_DISABLED 1
-
-ENV NEXT_OUTPUT=standalone
-ARG NEXT_PUBLIC_SALEOR_API_URL
-ENV NEXT_PUBLIC_SALEOR_API_URL=${NEXT_PUBLIC_SALEOR_API_URL}
-ARG NEXT_PUBLIC_STOREFRONT_URL
-ENV NEXT_PUBLIC_STOREFRONT_URL=${NEXT_PUBLIC_STOREFRONT_URL}
+# Environment variables for SvelteKit build
+ARG PUBLIC_SALEOR_API_URL
+ENV PUBLIC_SALEOR_API_URL=${PUBLIC_SALEOR_API_URL}
+ARG PUBLIC_STOREFRONT_URL
+ENV PUBLIC_STOREFRONT_URL=${PUBLIC_STOREFRONT_URL}
 
 # Get PNPM version from package.json
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 
+# Build SvelteKit application
 RUN pnpm build
 
-# Production image, copy all the files and run next
+# Production image, copy all the files and run SvelteKit
 FROM base AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
-# Uncomment the following line in case you want to disable telemetry during runtime.
-# ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV=production
 
-ARG NEXT_PUBLIC_SALEOR_API_URL
-ENV NEXT_PUBLIC_SALEOR_API_URL=${NEXT_PUBLIC_SALEOR_API_URL}
-ARG NEXT_PUBLIC_STOREFRONT_URL
-ENV NEXT_PUBLIC_STOREFRONT_URL=${NEXT_PUBLIC_STOREFRONT_URL}
+# Environment variables for runtime
+ARG PUBLIC_SALEOR_API_URL
+ENV PUBLIC_SALEOR_API_URL=${PUBLIC_SALEOR_API_URL}
+ARG PUBLIC_STOREFRONT_URL
+ENV PUBLIC_STOREFRONT_URL=${PUBLIC_STOREFRONT_URL}
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+# Create user for running the application
+RUN addgroup --system --gid 1001 sveltekit
+RUN adduser --system --uid 1001 sveltekit
 
-# COPY --from=builder /app/public ./public
+# Copy the built application from builder stage
+COPY --from=builder --chown=sveltekit:sveltekit /app/build ./build
+COPY --from=builder --chown=sveltekit:sveltekit /app/node_modules ./node_modules
+COPY --from=builder --chown=sveltekit:sveltekit /app/package.json ./package.json
 
-# Set the correct permission for prerender cache
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
+# Switch to non-root user
+USER sveltekit
 
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# Expose port
+EXPOSE 3000
 
-USER nextjs
-
-
-CMD ["node", "server.js"]
+# Start the SvelteKit application
+CMD ["node", "build"]
