@@ -2,6 +2,7 @@ import { defineConfig, devices } from "@playwright/test";
 import { config } from "dotenv";
 import * as fs from "fs";
 import { execSync } from "child_process";
+import * as http from "http";
 
 // Load environment-specific config
 const NODE_ENV = process.env.NODE_ENV || "test";
@@ -17,6 +18,69 @@ try {
 const PORT = process.env.PORT || 3000;
 const baseURL = process.env.BASE_URL || `http://localhost:${PORT}`;
 
+// Auto-detect package manager
+let packageManager = "npm";
+let packageExec = "npx";
+
+try {
+	// Check if pnpm is available
+	execSync("which pnpm", { stdio: "ignore" });
+	if (fs.existsSync("pnpm-lock.yaml")) {
+		packageManager = "pnpm";
+		packageExec = "pnpm exec";
+	}
+} catch (e) {
+	// Fall back to npm if pnpm not available
+	console.log("PNPM not found, using npm");
+}
+
+// Function to check if server is running on a specific port
+function isServerRunning(url: string): Promise<boolean> {
+	return new Promise((resolve) => {
+		const urlObj = new URL(url);
+		const port = parseInt(urlObj.port) || (urlObj.protocol === 'https:' ? 443 : 80);
+		const hostname = urlObj.hostname;
+
+		const req = http.get({
+			hostname,
+			port,
+			path: '/',
+			timeout: 2000
+		}, (res) => {
+			resolve(res.statusCode !== undefined && res.statusCode < 500);
+		});
+
+		req.on('error', () => resolve(false));
+		req.on('timeout', () => {
+			req.destroy();
+			resolve(false);
+		});
+	});
+}
+
+// Determine the correct server command based on target URL and environment
+function getServerCommand(targetUrl: string): string {
+	const urlObj = new URL(targetUrl);
+	const port = parseInt(urlObj.port) || 3000;
+	const dotenvCmd = packageManager === "pnpm" ? "pnpm exec dotenv" : "npx dotenv";
+
+	// Determine environment by port convention
+	switch (port) {
+		case 3000: // Development
+			return `${dotenvCmd} -e .env.development -- ${packageManager} run dev`;
+		
+		case 3001: // Production
+			return `${packageManager} run build:production && ${dotenvCmd} -e .env.production -- ${packageManager} run start`;
+		
+		case 3002: // Test
+			return `${dotenvCmd} -e .env.test -- ${packageManager} run build && ${dotenvCmd} -e .env.test -- ${packageManager} run start`;
+		
+		default:
+			// Fallback to development
+			return `${dotenvCmd} -e .env.development -- ${packageManager} run dev`;
+	}
+}
+
 // Test configuration
 const testConfig = {
 	testDir: "./__tests__",
@@ -24,7 +88,7 @@ const testConfig = {
 	workers: process.env.CI ? 3 : undefined,
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 2 : 0,
-	reporter: process.env.CI ? ([["html"], ["github"], ["list"]] as any) : ([["html"], ["list"]] as any),
+	reporter: process.env.CI ? (["html"], ["github"], ["list"]) as any : (["html"], ["list"]) as any,
 	timeout: 90 * 1000, // Увеличиваем timeout для большей стабильности
 	globalTimeout: 10 * 60 * 1000, // 10 минут общий таймаут
 
@@ -59,45 +123,38 @@ const testConfig = {
 	],
 };
 
-// Auto-detect package manager
-let packageManager = "npm";
-let devCommand = "npm run dev";
-
-try {
-	// Check if pnpm is available
-	execSync("which pnpm", { stdio: "ignore" });
-	if (fs.existsSync("pnpm-lock.yaml")) {
-		packageManager = "pnpm";
-		devCommand = "pnpm run dev";
+// Smart webServer configuration - always configure, but with intelligent command selection
+async function setupWebServer() {
+	const serverRunning = await isServerRunning(baseURL);
+	
+	if (serverRunning) {
+		console.log(`✅ Server already running at ${baseURL}`);
+		// Server is running, no need for webServer config
+		return testConfig;
 	}
-} catch (e) {
-	// Fall back to npm if pnpm not available
-	console.log("PNPM not found, using npm");
-	devCommand = "npm run dev";
-}
 
-// For test environment, we need to use the correct dotenv command
-if (NODE_ENV === "test") {
-	const dotenvCmd = packageManager === "pnpm" ? "pnpm exec dotenv" : "npx dotenv";
-	devCommand = `${dotenvCmd} -e .env.test -- ${packageManager} run dev`;
-}
+	console.log(`🚀 Server not found at ${baseURL}, will auto-start...`);
+	const serverCommand = getServerCommand(baseURL);
+	console.log(`📦 Command: ${serverCommand}`);
 
-// Web server configuration (only if BASE_URL is not set)
-if (!process.env.BASE_URL) {
-	// Auto-start development server for tests
+	// Add webServer configuration
 	(testConfig as any).webServer = {
-		command: devCommand,
+		command: serverCommand,
 		url: baseURL,
 		reuseExistingServer: !process.env.CI,
 		timeout: 120_000, // 2 minutes for startup
 		stdout: "pipe",
 		stderr: "pipe",
 		env: {
-			NODE_ENV: NODE_ENV,
-			// Inherit other environment variables
+			// Inherit all environment variables
 			...process.env,
 		},
 	};
+
+	return testConfig;
 }
 
-export default defineConfig(testConfig as any);
+// Export async configuration
+export default defineConfig(async () => {
+	return await setupWebServer();
+});

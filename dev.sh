@@ -48,7 +48,8 @@ show_help() {
     echo "  ./dev.sh docker development       # Start dev Docker container"
     echo "  ./dev.sh docker production        # Start prod Docker container"
     echo "  ./dev.sh docker test              # Run tests in Docker"
-    echo "  ./dev.sh test                     # Run tests locally"
+    echo "  ./dev.sh test                     # Run tests (auto-detects servers)"
+    echo "  ./dev.sh test production          # Test against production (auto-starts if needed)"
     echo "  ./dev.sh build production         # Build for production"
 }
 
@@ -110,40 +111,31 @@ run_tests() {
         echo "✅ Playwright browsers installed!"
     fi
     
-    # Check if development server is running (for local tests)
-    if [ "$ENV" = "development" ] || [ "$ENV" = "local" ]; then
-        echo "ℹ️  For local tests, make sure dev server is running:"
-        echo "   Run: $PKG_MANAGER run dev:local (in another terminal)"
-        echo "   Or use: ./dev.sh docker test (for full Docker test suite)"
-        echo ""
-        
-        # Quick check if server is responding
-        if ! curl -s http://localhost:3000 > /dev/null 2>&1; then
-            echo "⚠️  Development server not detected on http://localhost:3000"
-            echo "   Tests will try to start their own server (may take time)"
-            echo ""
-        fi
-    fi
+    echo "ℹ️  Smart server detection enabled - Playwright will:"
+    echo "   - Check if server is already running on target port"
+    echo "   - Auto-start appropriate server if needed"
+    echo "   - Use correct environment configuration"
+    echo ""
     
     case $ENV in
+        development)
+            echo "🎯 Testing against development environment (port 3000)"
+            BASE_URL=http://localhost:3000 $PKG_EXEC dotenv -e .env.test -- $PKG_EXEC playwright test
+            ;;
+        production)
+            echo "🎯 Testing against production environment (port 3001)" 
+            BASE_URL=http://localhost:3001 $PKG_EXEC dotenv -e .env.test -- $PKG_EXEC playwright test
+            ;;
+        test)
+            echo "🎯 Testing against test environment (port 3002)"
+            BASE_URL=http://localhost:3002 $PKG_EXEC dotenv -e .env.test -- $PKG_EXEC playwright test
+            ;;
         local)
+            echo "🎯 Testing with local configuration (default port)"
             $PKG_EXEC dotenv -e .env.test -- $PKG_EXEC playwright test
             ;;
-        docker)
-            # Use correct port based on environment
-            case "$ENV" in
-                test)
-                    BASE_URL=http://localhost:3002 $PKG_EXEC dotenv -e .env.test -- $PKG_EXEC playwright test
-                    ;;
-                production)
-                    BASE_URL=http://localhost:3001 $PKG_EXEC dotenv -e .env.test -- $PKG_EXEC playwright test
-                    ;;
-                *)
-                    BASE_URL=http://localhost:3000 $PKG_EXEC dotenv -e .env.test -- $PKG_EXEC playwright test
-                    ;;
-            esac
-            ;;
         *)
+            echo "🎯 Testing with default configuration"
             $PKG_EXEC dotenv -e .env.test -- $PKG_EXEC playwright test
             ;;
     esac
