@@ -17,7 +17,7 @@ try {
 }
 
 const PORT = process.env.PORT || 3000;
-const baseURL = process.env.BASE_URL || `http://localhost:${PORT}`;
+const baseURL = process.env.BASE_URL || `http://127.0.0.1:${PORT}`;
 
 // Auto-detect package manager
 let packageManager = "npm";

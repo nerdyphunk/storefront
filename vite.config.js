@@ -11,10 +11,11 @@ export default defineConfig(({ mode }) => {
 		plugins: [sveltekit()],
 		server: {
 			port: parseInt(process.env.PORT || "3000"),
+			host: "127.0.0.1", // Явная привязка к localhost
 		},
 		preview: {
 			port: parseInt(process.env.PORT || "4173"),
-			host: true,
+			host: "127.0.0.1", // Явная привязка к localhost
 		},
 		define: {
 			// Доступно в клиентском коде как __APP_ENV__

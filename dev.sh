@@ -128,15 +128,15 @@ run_tests() {
     case $ENV in
         development)
             echo "🎯 Testing against development environment (port 3000)"
-            BASE_URL=http://localhost:3000 $PKG_EXEC dotenv -e .env.test -- $PKG_EXEC playwright test
+            BASE_URL=http://127.0.0.1:3000 $PKG_EXEC dotenv -e .env.test -- $PKG_EXEC playwright test
             ;;
         production)
             echo "🎯 Testing against production environment (port 3001)" 
-            BASE_URL=http://localhost:3001 $PKG_EXEC dotenv -e .env.test -- $PKG_EXEC playwright test
+            BASE_URL=http://127.0.0.1:3001 $PKG_EXEC dotenv -e .env.test -- $PKG_EXEC playwright test
             ;;
         test)
             echo "🎯 Testing against test environment (port 3002)"
-            BASE_URL=http://localhost:3002 $PKG_EXEC dotenv -e .env.test -- $PKG_EXEC playwright test
+            BASE_URL=http://127.0.0.1:3002 $PKG_EXEC dotenv -e .env.test -- $PKG_EXEC playwright test
             ;;
         local)
             echo "🎯 Testing with local configuration (default port)"
