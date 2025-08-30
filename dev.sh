@@ -59,15 +59,18 @@ show_help() {
 }
 
 start_local() {
-    echo "🚀 Starting local development server ($ENV)..."
+    echo "🚀 Starting local server ($ENV)..."
     case $ENV in
         development)
+            echo "💻 Development mode with hot reload (port 3000)"
             $PKG_EXEC dotenv -e .env.development -- $PKG_MANAGER run dev
             ;;
         production)
+            echo "🎭 Production mode with optimized build (port 3001)"
             $PKG_MANAGER run build:production && $PKG_EXEC dotenv -e .env.production -- $PKG_MANAGER run start
             ;;
         test)
+            echo "🧪 Test mode for testing environment (port 3002)"
             $PKG_EXEC dotenv -e .env.test -- $PKG_MANAGER run build && $PKG_EXEC dotenv -e .env.test -- $PKG_MANAGER run start
             ;;
         *)

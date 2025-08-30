@@ -7,8 +7,8 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
-		"preview": "vite preview",
-		"start": "vite preview",
+		"preview": "vite preview --port ${PORT:-4173}",
+		"start": "vite preview --port ${PORT:-3000} --host",
 		"predev": "svelte-kit sync && npm run generate",
 		"prebuild": "svelte-kit sync && npm run generate",
 		"generate": "graphql-codegen --config .graphqlrc.ts",
