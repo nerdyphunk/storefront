@@ -1,0 +1,7 @@
+# Configuration compatible with both npm and pnpm
+save-exact=true
+
+# pnpm-specific settings (ignored by npm)
+auto-install-peers=true
+strict-peer-dependencies=false
+enable-pre-post-scripts=true

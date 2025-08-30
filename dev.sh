@@ -11,15 +11,20 @@ ENV=${2:-development}
 if command -v pnpm > /dev/null 2>&1; then
     PKG_MANAGER="pnpm"
     PKG_EXEC="pnpm exec"
+    echo "📦 Using package manager: $PKG_MANAGER (with pnpm configuration)"
 elif command -v npm > /dev/null 2>&1; then
     PKG_MANAGER="npm"
     PKG_EXEC="npx"
+    # Create npm-friendly config if needed
+    if [ -f ".pnpmrc" ] && [ ! -f ".npmrc" ]; then
+        echo "🔧 Creating npm-compatible .npmrc from .pnpmrc"
+        echo "save-exact=true" > .npmrc
+    fi
+    echo "📦 Using package manager: $PKG_MANAGER (with npm configuration)"
 else
     echo "❌ No package manager found. Please install npm or pnpm."
     exit 1
 fi
-
-echo "📦 Using package manager: $PKG_MANAGER"
 
 show_help() {
     echo "🌐 Saleor SvelteKit Storefront - Development CLI"
