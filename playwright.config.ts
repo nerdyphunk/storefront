@@ -5,8 +5,9 @@ import { execSync } from "child_process";
 import * as http from "http";
 
 // Load environment-specific config
-const NODE_ENV = process.env.NODE_ENV || "test";
-const envFile = `.env.${NODE_ENV}`;
+// Не используем NODE_ENV так как Vite управляет этим автоматически
+const TEST_ENV = process.env.TEST_ENV || "test";
+const envFile = `.env.${TEST_ENV}`;
 
 // Try to load environment-specific config, fallback to .env
 try {
