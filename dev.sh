@@ -8,8 +8,8 @@ COMMAND=${1:-help}
 ENV=${2:-development}
 
 # Detect available package manager
-# Try to actually run pnpm to verify it works, not just check if command exists
-if pnpm --version > /dev/null 2>&1; then
+# Try to actually run pnpm to verify it works and can execute commands
+if pnpm --version > /dev/null 2>&1 && pnpm exec echo "test" > /dev/null 2>&1; then
     PKG_MANAGER="pnpm"
     PKG_EXEC="pnpm exec"
     echo "📦 Using package manager: $PKG_MANAGER (with pnpm configuration)"
