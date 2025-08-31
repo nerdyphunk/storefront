@@ -89,7 +89,7 @@ const testConfig = {
 	workers: process.env.CI ? 3 : undefined,
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 2 : 0,
-	reporter: process.env.CI ? (["html"], ["github"], ["list"]) as any : (["html"], ["list"]) as any,
+	reporter: process.env.CI ? [["html"], ["github"], ["list"]] : [["html"], ["list"]],
 	timeout: 90 * 1000, // Увеличиваем timeout для большей стабильности
 	globalTimeout: 10 * 60 * 1000, // 10 минут общий таймаут
 
@@ -124,38 +124,23 @@ const testConfig = {
 	],
 };
 
-// Smart webServer configuration - always configure, but with intelligent command selection
-async function setupWebServer() {
-	const serverRunning = await isServerRunning(baseURL);
-	
-	if (serverRunning) {
-		console.log(`✅ Server already running at ${baseURL}`);
-		// Server is running, no need for webServer config
-		return testConfig;
-	}
 
-	console.log(`🚀 Server not found at ${baseURL}, will auto-start...`);
-	const serverCommand = getServerCommand(baseURL);
-	console.log(`📦 Command: ${serverCommand}`);
 
-	// Add webServer configuration
-	(testConfig as any).webServer = {
-		command: serverCommand,
-		url: baseURL,
-		reuseExistingServer: !process.env.CI,
-		timeout: 120_000, // 2 minutes for startup
-		stdout: "pipe",
-		stderr: "pipe",
-		env: {
-			// Inherit all environment variables
-			...process.env,
-		},
-	};
+// Configure webServer to auto-start if needed
+const serverCommand = getServerCommand(baseURL);
+console.log(`🎯 Will test against: ${baseURL}`);
+console.log(`📦 Auto-start command: ${serverCommand}`);
 
-	return testConfig;
-}
+(testConfig as any).webServer = {
+	command: serverCommand,
+	url: baseURL,
+	reuseExistingServer: !process.env.CI,
+	timeout: 120_000,
+	stdout: "pipe",
+	stderr: "pipe",
+	env: {
+		...process.env,
+	},
+};
 
-// Export async configuration
-export default defineConfig(async () => {
-	return await setupWebServer();
-});
+export default defineConfig(testConfig);
