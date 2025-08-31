@@ -7,13 +7,9 @@ set -e
 COMMAND=${1:-help}
 ENV=${2:-development}
 
-# Detect available package manager
-# Try to actually run pnpm to verify it works and can execute commands
-if pnpm --version > /dev/null 2>&1 && pnpm exec echo "test" > /dev/null 2>&1; then
-    PKG_MANAGER="pnpm"
-    PKG_EXEC="pnpm exec"
-    echo "📦 Using package manager: $PKG_MANAGER (with pnpm configuration)"
-elif npm --version > /dev/null 2>&1; then
+# Force npm usage to avoid pnpm detection issues
+# Even if pnpm is detected, we'll use npm for compatibility
+if npm --version > /dev/null 2>&1; then
     PKG_MANAGER="npm"
     PKG_EXEC="npx"
     # Create npm-friendly config if needed
@@ -21,9 +17,9 @@ elif npm --version > /dev/null 2>&1; then
         echo "🔧 Creating npm-compatible .npmrc from .pnpmrc"
         echo "save-exact=true" > .npmrc
     fi
-    echo "📦 Using package manager: $PKG_MANAGER (with npm configuration)"
+    echo "📦 Using package manager: $PKG_MANAGER (forced npm for compatibility)"
 else
-    echo "❌ No package manager found. Please install npm or pnpm."
+    echo "❌ npm not found. Please install npm."
     exit 1
 fi
 
