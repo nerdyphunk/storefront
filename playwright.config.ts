@@ -63,7 +63,7 @@ function isServerRunning(url: string): Promise<boolean> {
 function getServerCommand(targetUrl: string): string {
 	const urlObj = new URL(targetUrl);
 	const port = parseInt(urlObj.port) || 3000;
-	const dotenvCmd = packageManager === "pnpm" ? "pnpm exec dotenv" : "npx dotenv";
+	const dotenvCmd = packageManager === "pnpm" ? "pnpm exec dotenv-cli" : "npx dotenv-cli";
 
 	// Determine environment by port convention
 	switch (port) {

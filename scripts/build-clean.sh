@@ -26,6 +26,6 @@ fi
 echo "📦 Using package manager: $PKG_MANAGER"
 
 # Запускаем сборку с правильной конфигурацией окружения
-$PKG_EXEC dotenv -e "$ENV_FILE" -- $PKG_MANAGER run build
+$PKG_EXEC dotenv-cli -e "$ENV_FILE" -- $PKG_MANAGER run build
 
 echo "✅ Build completed successfully!"

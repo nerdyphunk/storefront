@@ -63,15 +63,15 @@ start_local() {
     case $ENV in
         development)
             echo "💻 Development mode with hot reload (port 3000)"
-            $PKG_EXEC dotenv -e .env.development -- $PKG_MANAGER run dev
+            $PKG_EXEC dotenv-cli -e .env.development -- $PKG_MANAGER run dev
             ;;
         production)
             echo "🎭 Production mode with optimized build (port 3001)"
-            $PKG_MANAGER run build:production && $PKG_EXEC dotenv -e .env.production -- $PKG_MANAGER run start
+            $PKG_MANAGER run build:production && $PKG_EXEC dotenv-cli -e .env.production -- $PKG_MANAGER run start
             ;;
         test)
             echo "🧪 Test mode for testing environment (port 3002)"
-            $PKG_EXEC dotenv -e .env.test -- $PKG_MANAGER run build && $PKG_EXEC dotenv -e .env.test -- $PKG_MANAGER run start
+            $PKG_EXEC dotenv-cli -e .env.test -- $PKG_MANAGER run build && $PKG_EXEC dotenv-cli -e .env.test -- $PKG_MANAGER run start
             ;;
         *)
             echo "❌ Unknown environment: $ENV"
@@ -94,13 +94,13 @@ build_project() {
     echo "🏗️  Building project ($ENV)..."
     case $ENV in
         development)
-            $PKG_EXEC dotenv -e .env.development -- $PKG_MANAGER run build
+            $PKG_EXEC dotenv-cli -e .env.development -- $PKG_MANAGER run build
             ;;
         production)
             $PKG_MANAGER run build:production
             ;;
         test)
-            $PKG_EXEC dotenv -e .env.test -- $PKG_MANAGER run build
+            $PKG_EXEC dotenv-cli -e .env.test -- $PKG_MANAGER run build
             ;;
         *)
             echo "❌ Unknown environment: $ENV"
@@ -128,23 +128,23 @@ run_tests() {
     case $ENV in
         development)
             echo "🎯 Testing against development environment (port 3000)"
-            BASE_URL=http://127.0.0.1:3000 $PKG_EXEC dotenv -e .env.test -- $PKG_EXEC playwright test
+            BASE_URL=http://127.0.0.1:3000 $PKG_EXEC dotenv-cli -e .env.test -- $PKG_EXEC playwright test
             ;;
         production)
             echo "🎯 Testing against production environment (port 3001)" 
-            BASE_URL=http://127.0.0.1:3001 $PKG_EXEC dotenv -e .env.test -- $PKG_EXEC playwright test
+            BASE_URL=http://127.0.0.1:3001 $PKG_EXEC dotenv-cli -e .env.test -- $PKG_EXEC playwright test
             ;;
         test)
             echo "🎯 Testing against test environment (port 3002)"
-            BASE_URL=http://127.0.0.1:3002 $PKG_EXEC dotenv -e .env.test -- $PKG_EXEC playwright test
+            BASE_URL=http://127.0.0.1:3002 $PKG_EXEC dotenv-cli -e .env.test -- $PKG_EXEC playwright test
             ;;
         local)
             echo "🎯 Testing with local configuration (default port)"
-            $PKG_EXEC dotenv -e .env.test -- $PKG_EXEC playwright test
+            $PKG_EXEC dotenv-cli -e .env.test -- $PKG_EXEC playwright test
             ;;
         *)
             echo "🎯 Testing with default configuration"
-            $PKG_EXEC dotenv -e .env.test -- $PKG_EXEC playwright test
+            $PKG_EXEC dotenv-cli -e .env.test -- $PKG_EXEC playwright test
             ;;
     esac
 }

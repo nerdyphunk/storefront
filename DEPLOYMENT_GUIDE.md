@@ -343,7 +343,7 @@ ls -la .env*
 cat .env.development
 
 # Load specific environment
-dotenv -e .env.development -- pnpm run dev
+dotenv-cli -e .env.development -- pnpm run dev
 ```
 
 ### Debug Commands
