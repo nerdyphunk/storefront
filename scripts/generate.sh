@@ -5,8 +5,12 @@ set -e
 
 echo "🔄 Generating GraphQL types..."
 
-# Используем правильный пакетный менеджер
-if command -v pnpm > /dev/null 2>&1; then
+# Определяем правильный пакетный менеджер
+if [ -f "pnpm-lock.yaml" ] && (command -v pnpm > /dev/null 2>&1 || command -v corepack > /dev/null 2>&1); then
+    # Если pnpm недоступен, активируем через corepack
+    if ! command -v pnpm > /dev/null 2>&1; then
+        corepack enable 2>/dev/null || true
+    fi
     pnpm exec graphql-codegen --config .graphqlrc.ts
 elif command -v npx > /dev/null 2>&1; then
     # Временно устанавливаем чистую конфигурацию для npm
