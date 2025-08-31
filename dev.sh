@@ -15,20 +15,23 @@ fi
 
 # Check for pnpm first (preferred)
 if command -v pnpm > /dev/null 2>&1 && pnpm --version > /dev/null 2>&1; then
-    # Test if pnpm can actually execute commands with our dependencies
-    if pnpm list dotenv-cli > /dev/null 2>&1 || npm list dotenv-cli > /dev/null 2>&1; then
+    # Test if pnpm can execute dotenv (the actual command for $DOTENV_CMD package)
+    if pnpm exec dotenv --help > /dev/null 2>&1; then
         PKG_MANAGER="pnpm"
         PKG_EXEC="pnpm exec"
+        DOTENV_CMD="dotenv"  # pnpm uses 'dotenv' command from dotenv-cli package
         echo "📦 Using package manager: $PKG_MANAGER (with pnpm configuration)"
     else
-        echo "⚠️  pnpm found but dotenv-cli not available, falling back to npm"
+        echo "⚠️  pnpm found but dotenv not available, falling back to npm"
         PKG_MANAGER="npm"
         PKG_EXEC="npx"
+        DOTENV_CMD="dotenv-cli"  # npm uses 'dotenv-cli' command
         echo "📦 Using package manager: $PKG_MANAGER (fallback from pnpm)"
     fi
 elif command -v npm > /dev/null 2>&1 && npm --version > /dev/null 2>&1; then
     PKG_MANAGER="npm"
     PKG_EXEC="npx"
+    DOTENV_CMD="dotenv-cli"  # npm uses 'dotenv-cli' command
     # Create npm-friendly config if needed
     if [ -f ".pnpmrc" ] && [ ! -f ".npmrc" ]; then
         echo "🔧 Creating npm-compatible .npmrc from .pnpmrc"
@@ -77,15 +80,15 @@ start_local() {
     case $ENV in
         development)
             echo "💻 Development mode with hot reload (port 3000)"
-            $PKG_EXEC dotenv-cli -e .env.development -- $PKG_MANAGER run dev
+            $PKG_EXEC $DOTENV_CMD -e .env.development -- $PKG_MANAGER run dev
             ;;
         production)
             echo "🎭 Production mode with optimized build (port 3001)"
-            $PKG_MANAGER run build:production && $PKG_EXEC dotenv-cli -e .env.production -- $PKG_MANAGER run start
+            $PKG_MANAGER run build:production && $PKG_EXEC $DOTENV_CMD -e .env.production -- $PKG_MANAGER run start
             ;;
         test)
             echo "🧪 Test mode for testing environment (port 3002)"
-            $PKG_EXEC dotenv-cli -e .env.test -- $PKG_MANAGER run build && $PKG_EXEC dotenv-cli -e .env.test -- $PKG_MANAGER run start
+            $PKG_EXEC $DOTENV_CMD -e .env.test -- $PKG_MANAGER run build && $PKG_EXEC $DOTENV_CMD -e .env.test -- $PKG_MANAGER run start
             ;;
         *)
             echo "❌ Unknown environment: $ENV"
@@ -108,13 +111,13 @@ build_project() {
     echo "🏗️  Building project ($ENV)..."
     case $ENV in
         development)
-            $PKG_EXEC dotenv-cli -e .env.development -- $PKG_MANAGER run build
+            $PKG_EXEC $DOTENV_CMD -e .env.development -- $PKG_MANAGER run build
             ;;
         production)
             $PKG_MANAGER run build:production
             ;;
         test)
-            $PKG_EXEC dotenv-cli -e .env.test -- $PKG_MANAGER run build
+            $PKG_EXEC $DOTENV_CMD -e .env.test -- $PKG_MANAGER run build
             ;;
         *)
             echo "❌ Unknown environment: $ENV"
@@ -142,23 +145,23 @@ run_tests() {
     case $ENV in
         development)
             echo "🎯 Testing against development environment (port 3000)"
-            BASE_URL=http://127.0.0.1:3000 $PKG_EXEC dotenv-cli -e .env.test -- $PKG_EXEC playwright test
+            BASE_URL=http://127.0.0.1:3000 $PKG_EXEC $DOTENV_CMD -e .env.test -- $PKG_EXEC playwright test
             ;;
         production)
             echo "🎯 Testing against production environment (port 3001)" 
-            BASE_URL=http://127.0.0.1:3001 $PKG_EXEC dotenv-cli -e .env.test -- $PKG_EXEC playwright test
+            BASE_URL=http://127.0.0.1:3001 $PKG_EXEC $DOTENV_CMD -e .env.test -- $PKG_EXEC playwright test
             ;;
         test)
             echo "🎯 Testing against test environment (port 3002)"
-            BASE_URL=http://127.0.0.1:3002 $PKG_EXEC dotenv-cli -e .env.test -- $PKG_EXEC playwright test
+            BASE_URL=http://127.0.0.1:3002 $PKG_EXEC $DOTENV_CMD -e .env.test -- $PKG_EXEC playwright test
             ;;
         local)
             echo "🎯 Testing with local configuration (default port)"
-            $PKG_EXEC dotenv-cli -e .env.test -- $PKG_EXEC playwright test
+            $PKG_EXEC $DOTENV_CMD -e .env.test -- $PKG_EXEC playwright test
             ;;
         *)
             echo "🎯 Testing with default configuration"
-            $PKG_EXEC dotenv-cli -e .env.test -- $PKG_EXEC playwright test
+            $PKG_EXEC $DOTENV_CMD -e .env.test -- $PKG_EXEC playwright test
             ;;
     esac
 }
