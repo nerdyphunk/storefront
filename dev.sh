@@ -7,9 +7,26 @@ set -e
 COMMAND=${1:-help}
 ENV=${2:-development}
 
-# Force npm usage to avoid pnpm detection issues
-# Even if pnpm is detected, we'll use npm for compatibility
-if npm --version > /dev/null 2>&1; then
+# Detect available package manager with preference for pnpm
+# First try to enable pnpm via corepack if available
+if command -v corepack > /dev/null 2>&1; then
+    corepack enable 2>/dev/null || true
+fi
+
+# Check for pnpm first (preferred)
+if command -v pnpm > /dev/null 2>&1 && pnpm --version > /dev/null 2>&1; then
+    # Test if pnpm can actually execute commands with our dependencies
+    if pnpm list dotenv-cli > /dev/null 2>&1 || npm list dotenv-cli > /dev/null 2>&1; then
+        PKG_MANAGER="pnpm"
+        PKG_EXEC="pnpm exec"
+        echo "📦 Using package manager: $PKG_MANAGER (with pnpm configuration)"
+    else
+        echo "⚠️  pnpm found but dotenv-cli not available, falling back to npm"
+        PKG_MANAGER="npm"
+        PKG_EXEC="npx"
+        echo "📦 Using package manager: $PKG_MANAGER (fallback from pnpm)"
+    fi
+elif command -v npm > /dev/null 2>&1 && npm --version > /dev/null 2>&1; then
     PKG_MANAGER="npm"
     PKG_EXEC="npx"
     # Create npm-friendly config if needed
@@ -17,9 +34,9 @@ if npm --version > /dev/null 2>&1; then
         echo "🔧 Creating npm-compatible .npmrc from .pnpmrc"
         echo "save-exact=true" > .npmrc
     fi
-    echo "📦 Using package manager: $PKG_MANAGER (forced npm for compatibility)"
+    echo "📦 Using package manager: $PKG_MANAGER (with npm configuration)"
 else
-    echo "❌ npm not found. Please install npm."
+    echo "❌ No package manager found. Please install npm or pnpm."
     exit 1
 fi
 
