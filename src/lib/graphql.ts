@@ -66,7 +66,7 @@ export async function executeGraphQL<Result, Variables>(
 
 class GraphQLError extends Error {
 	constructor(public errorResponse: GraphQLErrorResponse) {
-		const message = errorResponse.errors.map((error) => error.message).join("\n");
+		const message = errorResponse.errors.map((error) => error.message).join("\n") || "Unknown GraphQL error";
 		super(message);
 		this.name = this.constructor.name;
 		Object.setPrototypeOf(this, new.target.prototype);

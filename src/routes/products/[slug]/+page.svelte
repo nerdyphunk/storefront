@@ -11,7 +11,9 @@
 	// Get selected variant from URL params
 	const selectedVariantId = $derived($page.url.searchParams.get("variant"));
 	const selectedVariant = $derived(
-		selectedVariantId ? product?.variants?.find((v: any) => v.id === selectedVariantId) : product?.variants?.[0],
+		selectedVariantId 
+			? product?.variants?.find((v: any) => v.id === selectedVariantId) 
+			: product?.variants?.[0] ?? undefined,
 	);
 
 	const currentPrice = $derived(selectedVariant?.pricing?.price?.gross);
@@ -74,7 +76,7 @@
 										name="variant"
 										value={variant.id}
 										checked={selectedVariantId === variant.id ||
-											(!selectedVariantId && variant === product.variants[0])}
+											(!selectedVariantId && product.variants?.[0] && variant === product.variants[0])}
 										disabled={!variant.quantityAvailable}
 										onchange={() => {
 											const url = new URL(window.location.href);

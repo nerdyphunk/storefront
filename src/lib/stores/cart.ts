@@ -79,8 +79,9 @@ function createCartStore() {
 				});
 
 				if (result.checkoutLinesAdd?.errors?.length) {
-					throw new Error(result.checkoutLinesAdd.errors[0].message || "Failed to add item");
-				}
+				const firstError = result.checkoutLinesAdd.errors[0];
+				throw new Error(firstError?.message || "Failed to add item");
+			}
 
 				const updatedCheckout = result.checkoutLinesAdd?.checkout;
 
@@ -119,8 +120,9 @@ function createCartStore() {
 				});
 
 				if (result.checkoutLinesDelete?.errors?.length) {
-					throw new Error(result.checkoutLinesDelete.errors[0].message || "Failed to remove item");
-				}
+				const firstError = result.checkoutLinesDelete.errors[0];
+				throw new Error(firstError?.message || "Failed to remove item");
+			}
 
 				const updatedCheckout = result.checkoutLinesDelete?.checkout;
 
