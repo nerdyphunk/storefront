@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Test different approaches to see which one works best
+
+echo "🧪 Testing graceful shutdown approaches"
+echo "
+=== Test 1: Direct vite command ===" 
+echo "Command: npx dotenv-cli -e .env.development -- vite dev --port 3000"
+echo "Expected: Clean exit with Ctrl+C"
+echo "Try it: Ctrl+C should exit cleanly"
+echo "
+=== Test 2: Through npm with --silent ===" 
+echo "Command: npm run serve:dev"
+echo "Expected: Clean exit with Ctrl+C"
+echo "
+=== Test 3: Clean start script ===" 
+echo "Command: ./scripts/start-clean.sh development"
+echo "Expected: Clean exit with Ctrl+C"
+echo "
+=== Test 4: Original dev.sh ===" 
+echo "Command: ./dev.sh start development"
+echo "Expected: Clean exit with Ctrl+C"
+echo "
+Команды для тестирования:"
+echo "npm run serve:dev        # Прямой вызов vite"
+echo "./scripts/start-clean.sh development  # Через exec"
+echo "./dev.sh start development             # Обновленный dev.sh"
