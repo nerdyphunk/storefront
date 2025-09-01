@@ -1,9 +1,9 @@
 import { writable } from "svelte/store";
 import { browser } from "$app/environment";
-import { getIdFromCookies, saveIdToCookie, findOrCreate } from "../checkout";
-import { executeGraphQL } from "../graphql";
-import { CheckoutAddLineDocument, CheckoutDeleteLinesDocument } from "../../gql/graphql";
-import type { CheckoutFragmentFragment } from "../../gql/graphql";
+import { getIdFromCookies, saveIdToCookie, findOrCreate } from "@lib/checkout";
+import { executeGraphQL } from "@lib/graphql";
+import { CheckoutAddLineDocument, CheckoutDeleteLinesDocument } from "@gql/graphql";
+import type { CheckoutFragmentFragment } from "@gql/graphql";
 
 interface CartState {
 	checkout: CheckoutFragmentFragment | null;
@@ -42,7 +42,7 @@ function createCartStore() {
 					...state,
 					checkout: (checkout as CheckoutFragmentFragment) || null,
 					isLoading: false,
-					itemsCount: checkout?.lines?.reduce((total, line) => total + line.quantity, 0) || 0,
+					itemsCount: checkout?.lines?.reduce((total: number, line: any) => total + line.quantity, 0) || 0,
 					error: null,
 				}));
 			} catch (error) {
@@ -88,7 +88,7 @@ function createCartStore() {
 					...state,
 					checkout: (updatedCheckout as CheckoutFragmentFragment) || null,
 					isLoading: false,
-					itemsCount: updatedCheckout?.lines?.reduce((total, line) => total + line.quantity, 0) || 0,
+					itemsCount: updatedCheckout?.lines?.reduce((total: number, line: any) => total + line.quantity, 0) || 0,
 					error: null,
 				}));
 			} catch (error) {
@@ -128,7 +128,7 @@ function createCartStore() {
 					...state,
 					checkout: (updatedCheckout as CheckoutFragmentFragment) || null,
 					isLoading: false,
-					itemsCount: updatedCheckout?.lines?.reduce((total, line) => total + line.quantity, 0) || 0,
+					itemsCount: updatedCheckout?.lines?.reduce((total: number, line: any) => total + line.quantity, 0) || 0,
 					error: null,
 				}));
 			} catch (error) {

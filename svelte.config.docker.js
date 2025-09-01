@@ -11,6 +11,12 @@ const config = {
 		adapter: adapter(),
 		alias: {
 			"@": "./src",
+			"@lib": "./src/lib",
+			"@components": "./src/lib/components",
+			"@stores": "./src/lib/stores",
+			"@utils": "./src/lib/utils",
+			"@gql": "./src/gql",
+			"@graphql": "./src/graphql",
 		},
 	},
 };

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageData } from "./$types";
-	import AddToCartButton from "../../../lib/components/AddToCartButton.svelte";
-	import { formatMoneyRange } from "../../../lib/utils";
+	import AddToCartButton from "@components/AddToCartButton.svelte";
+	import { formatMoneyRange } from "@lib/utils";
 	import { page } from "$app/stores";
 
 	let { data }: { data: PageData } = $props();
@@ -11,7 +11,7 @@
 	// Get selected variant from URL params
 	const selectedVariantId = $derived($page.url.searchParams.get("variant"));
 	const selectedVariant = $derived(
-		selectedVariantId ? product?.variants?.find((v) => v.id === selectedVariantId) : product?.variants?.[0],
+		selectedVariantId ? product?.variants?.find((v: any) => v.id === selectedVariantId) : product?.variants?.[0],
 	);
 
 	const currentPrice = $derived(selectedVariant?.pricing?.price?.gross);

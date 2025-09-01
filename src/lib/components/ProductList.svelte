@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ProductListItemFragment } from "../../gql/graphql";
+	import type { ProductListItemFragment } from "@gql/graphql";
 	import ProductElement from "./ProductElement.svelte";
 
 	let { products }: { products: readonly ProductListItemFragment[] } = $props();

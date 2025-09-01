@@ -1,7 +1,7 @@
 import { writable, derived, get } from 'svelte/store';
-import type { ProductListItemFragment, PageInfo } from '../../gql/graphql';
-import { ProductListPaginatedDocument } from '../../gql/graphql';
-import { executeGraphQL } from '../graphql';
+import type { ProductListItemFragment, PageInfo } from '@gql/graphql';
+import { ProductListPaginatedDocument } from '@gql/graphql';
+import { executeGraphQL } from '@lib/graphql';
 
 // Our PageInfo only includes the fields we actually fetch from GraphQL
 type PaginationInfo = {
@@ -232,7 +232,7 @@ async function fetchProductPage(after?: string | null): Promise<{
 	}
 	
 	return {
-		products: data.products.edges.map(({ node }) => node),
+		products: data.products.edges.map(({ node }: any) => node),
 		pageInfo: data.products.pageInfo
 	};
 }

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageData } from "./$types";
-	import { cartStore } from "../../lib/stores/cart";
-	import CartProductList from "../../lib/components/CartProductList.svelte";
+	import { cartStore } from "@stores/cart";
+	import CartProductList from "@components/CartProductList.svelte";
 	import { onMount } from "svelte";
 
 	let { data }: { data: PageData } = $props();

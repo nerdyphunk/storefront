@@ -1,5 +1,5 @@
-import { ProductListByCollectionDocument } from "../gql/graphql";
-import { executeGraphQL } from "../lib/graphql";
+import { ProductListByCollectionDocument } from "@gql/graphql";
+import { executeGraphQL } from "@lib/graphql";
 import type { PageLoad } from "./$types";
 
 export const load: PageLoad = async ({ fetch }) => {
@@ -16,7 +16,7 @@ export const load: PageLoad = async ({ fetch }) => {
 			});
 
 			if (data.collection?.products?.edges?.length) {
-				const products = data.collection.products.edges.map(({ node: product }) => product);
+				const products = data.collection.products.edges.map(({ node: product }: any) => product);
 				return { products };
 			}
 		} catch (error) {
@@ -24,7 +24,7 @@ export const load: PageLoad = async ({ fetch }) => {
 		}
 
 		// If no featured collection, try to get any products
-		const { ProductListPaginatedDocument } = await import("../gql/graphql");
+		const { ProductListPaginatedDocument } = await import("@gql/graphql");
 		try {
 			const data = await executeGraphQL(ProductListPaginatedDocument, {
 				variables: {
@@ -34,7 +34,7 @@ export const load: PageLoad = async ({ fetch }) => {
 			});
 
 			if (data.products?.edges?.length) {
-				const products = data.products.edges.map(({ node: product }) => product);
+				const products = data.products.edges.map(({ node: product }: any) => product);
 				return { products };
 			}
 		} catch (error) {

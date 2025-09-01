@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cartStore } from "../stores/cart";
+	import { cartStore } from "@stores/cart";
 	import { onMount } from "svelte";
 
 	onMount(() => {

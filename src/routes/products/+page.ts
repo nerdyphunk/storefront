@@ -1,5 +1,5 @@
-import { ProductListPaginatedDocument } from "../../gql/graphql";
-import { executeGraphQL } from "../../lib/graphql";
+import { ProductListPaginatedDocument } from "@gql/graphql";
+import { executeGraphQL } from "@lib/graphql";
 import type { PageLoad } from "./$types";
 
 export const load: PageLoad = async ({ url }) => {
@@ -19,7 +19,7 @@ export const load: PageLoad = async ({ url }) => {
 		});
 
 		if (data.products?.edges?.length) {
-			const products = data.products.edges.map(({ node: product }) => product);
+			const products = data.products.edges.map(({ node: product }: any) => product);
 			const pageInfo = data.products.pageInfo;
 			return { products, pageInfo };
 		}

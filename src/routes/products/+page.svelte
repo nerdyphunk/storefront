@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageData } from "./$types";
-	import ProductList from "../../lib/components/ProductList.svelte";
-	import LoadingSpinner from "../../lib/components/LoadingSpinner.svelte";
+	import ProductList from "@components/ProductList.svelte";
+	import LoadingSpinner from "@components/LoadingSpinner.svelte";
 	import { onMount, onDestroy } from "svelte";
 	import { 
 		initializeProducts, 
@@ -12,8 +12,8 @@
 		hasMoreProducts,
 		isLoadingMore,
 		productsError
-	} from "../../lib/stores/products";
-	import { createScrollObserver, throttle } from "../../lib/utils/intersection-observer";
+	} from "@stores/products";
+	import { createScrollObserver, throttle } from "@lib/utils/intersection-observer";
 
 	let { data }: { data: PageData } = $props();
 	let containerElement: HTMLElement;
