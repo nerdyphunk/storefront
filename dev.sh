@@ -80,15 +80,18 @@ start_local() {
     case $ENV in
         development)
             echo "💻 Development mode with hot reload (port 3000)"
-            $PKG_EXEC $DOTENV_CMD -e .env.development -- $PKG_MANAGER run dev
+            echo "💡 Press Ctrl+C once to stop gracefully"
+            $PKG_MANAGER run start:dev
             ;;
         production)
             echo "🎭 Production mode with optimized build (port 3001)"
-            $PKG_MANAGER run build:production && $PKG_EXEC $DOTENV_CMD -e .env.production -- $PKG_MANAGER run start
+            echo "💡 Press Ctrl+C once to stop gracefully"
+            $PKG_MANAGER run build:production && $PKG_MANAGER run start:prod
             ;;
         test)
             echo "🧪 Test mode for testing environment (port 3002)"
-            $PKG_EXEC $DOTENV_CMD -e .env.test -- $PKG_MANAGER run build && $PKG_EXEC $DOTENV_CMD -e .env.test -- $PKG_MANAGER run start
+            echo "💡 Press Ctrl+C once to stop gracefully"
+            $PKG_EXEC $DOTENV_CMD -e .env.test -- $PKG_MANAGER run build && $PKG_MANAGER run start:test
             ;;
         *)
             echo "❌ Unknown environment: $ENV"
