@@ -11,7 +11,6 @@ const config = {
 		adapter: adapter({
 			out: "build",
 			precompress: false,
-			envPrefix: ["PUBLIC_"],
 		}),
 		alias: {
 			"@": "./src",
