@@ -80,7 +80,7 @@ start_local() {
     case $ENV in
         development)
             echo "💻 Development mode with hot reload (port 3000)"
-            ./scripts/start-clean.sh development
+            ./scripts/dev-start.sh
             ;;
         production)
             echo "🎭 Production mode with optimized build (port 3001)"
