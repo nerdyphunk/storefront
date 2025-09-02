@@ -47,6 +47,7 @@
 	"dependencies": {
 		"@adyen/adyen-web": "5.53.3",
 		"@adyen/api-library": "15.0.0-beta",
+		"@esbuild/linux-x64": "^0.25.9",
 		"@rollup/rollup-linux-x64-gnu": "^4.50.0",
 		"@saleor/auth-sdk": "1.0.2",
 		"@stripe/stripe-js": "2.2.0",
