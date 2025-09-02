@@ -11,10 +11,15 @@ const config = {
 		adapter: adapter({
 			out: "build",
 			precompress: false,
-			envPrefix: ["PUBLIC_"],
 		}),
 		alias: {
 			"@": "./src",
+			"@lib": "./src/lib",
+			"@components": "./src/lib/components",
+			"@stores": "./src/lib/stores",
+			"@utils": "./src/lib/utils",
+			"@gql": "./src/gql",
+			"@graphql": "./src/graphql",
 		},
 	},
 };

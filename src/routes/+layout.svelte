@@ -1,7 +1,7 @@
 <script lang="ts">
 	import "../app.css";
 	import { page } from "$app/stores";
-	import CartNavItem from "../lib/components/CartNavItem.svelte";
+	import CartNavItem from "@components/CartNavItem.svelte";
 
 	let { children } = $props();
 </script>

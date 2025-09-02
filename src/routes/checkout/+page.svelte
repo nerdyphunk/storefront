@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PageData } from "./$types";
-	import { cartStore } from "../../lib/stores/cart";
+	import { cartStore } from "@stores/cart";
 	import { onMount } from "svelte";
 
 	let { data }: { data: PageData } = $props();

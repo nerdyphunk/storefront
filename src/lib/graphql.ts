@@ -1,5 +1,5 @@
 import { invariant } from "ts-invariant";
-import { type TypedDocumentString } from "../gql/graphql";
+import { type TypedDocumentString } from "@gql/graphql";
 import { PUBLIC_SALEOR_API_URL } from "$env/static/public";
 // TODO: Implement auth client for SvelteKit if needed
 
@@ -66,7 +66,7 @@ export async function executeGraphQL<Result, Variables>(
 
 class GraphQLError extends Error {
 	constructor(public errorResponse: GraphQLErrorResponse) {
-		const message = errorResponse.errors.map((error) => error.message).join("\n");
+		const message = errorResponse.errors.map((error) => error.message).join("\n") || "Unknown GraphQL error";
 		super(message);
 		this.name = this.constructor.name;
 		Object.setPrototypeOf(this, new.target.prototype);

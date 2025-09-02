@@ -1,5 +1,5 @@
-import { ProductListPaginatedDocument } from "../../gql/graphql";
-import { executeGraphQL } from "../../lib/graphql";
+import { ProductListPaginatedDocument } from "@gql/graphql";
+import { executeGraphQL } from "@lib/graphql";
 import { PUBLIC_SALEOR_API_URL } from "$env/static/public";
 import type { PageLoad } from "./$types";
 
@@ -22,7 +22,7 @@ export const load: PageLoad = async () => {
 		if (data.products?.edges) {
 			testResult.success = true;
 			testResult.productCount = data.products.edges.length;
-			testResult.sampleProducts = data.products.edges.map(({ node }) => ({
+			testResult.sampleProducts = data.products.edges.map(({ node }: any) => ({
 				id: node.id,
 				name: node.name,
 			}));
