@@ -6,8 +6,8 @@
 echo "🚀 Starting development server"
 echo "💡 Press Ctrl+C to stop"
 
-# Simple approach - let npm handle the terminal
-npx dotenv-cli -e .env.development -- npm run dev
+# Direct approach - call vite dev directly with proper signal handling
+npx dotenv-cli -e .env.development -- vite dev
 
 # Ensure terminal is reset after exit
 stty sane 2>/dev/null || true
