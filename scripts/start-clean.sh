@@ -18,10 +18,10 @@ case $ENV in
         exec npx dotenv-cli -e .env.development -- node_modules/.bin/vite dev --port 3000
         ;;
     production)
-        exec npx dotenv-cli -e .env.production -- node_modules/.bin/vite preview --port 3001
+        exec npx dotenv-cli -e .env.production -- node .svelte-kit/output/server/index.js
         ;;
     test)
-        exec npx dotenv-cli -e .env.test -- node_modules/.bin/vite preview --port 3002
+        exec npx dotenv-cli -e .env.test -- node .svelte-kit/output/server/index.js
         ;;
     *)
         echo "❌ Unknown environment: $ENV"
