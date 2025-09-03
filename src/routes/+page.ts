@@ -1,4 +1,4 @@
-import { ProductListByCollectionDocument } from "$lib/../gql";
+import { ProductListByCollectionDocument } from "@gql";
 import { executeGraphQL } from "@lib/graphql";
 import type { PageLoad } from "./$types";
 
@@ -24,7 +24,7 @@ export const load: PageLoad = async ({ fetch }) => {
 		}
 
 		// If no featured collection, try to get any products
-		const { ProductListPaginatedDocument } = await import("$lib/../gql");
+		const { ProductListPaginatedDocument } = await import("@gql");
 		try {
 			const data = await executeGraphQL(ProductListPaginatedDocument, {
 				variables: {

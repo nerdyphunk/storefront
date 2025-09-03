@@ -1,6 +1,6 @@
 import { writable, derived, get } from "svelte/store";
-import type { ProductListItemFragment, PageInfo } from "$lib/../gql";
-import { ProductListPaginatedDocument } from "$lib/../gql";
+import type { ProductListItemFragment, PageInfo } from "@gql";
+import { ProductListPaginatedDocument } from "@gql";
 import { executeGraphQL } from "@lib/graphql";
 
 // Our PageInfo only includes the fields we actually fetch from GraphQL
