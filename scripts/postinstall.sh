@@ -23,7 +23,10 @@ mkdir -p src/gql
 # 2. Create basic index.ts file for @gql alias
 echo "📄 Creating basic gql index file..."
 if [ ! -f "src/gql/index.ts" ]; then
-    cat > src/gql/index.ts << 'EOF'
+    # Create placeholder with working toString() method
+    ./scripts/create-gql-placeholder.sh || {
+        echo "⚠️  Fallback: creating minimal placeholder"
+        cat > src/gql/index.ts << 'EOF'
 // Auto-generated GraphQL types will be exported from here
 // This file is created during postinstall to prevent import errors during SSR
 
@@ -37,9 +40,10 @@ export const ProductListPaginatedDocument = "ProductListPaginatedDocument_PLACEH
 export const ProductListByCollectionDocument = "ProductListByCollectionDocument_PLACEHOLDER";
 export const ProductDetailsDocument = "ProductDetailsDocument_PLACEHOLDER";
 
-// Add more exports as needed when GraphQL types are generated
+// Add more exports as needed when GraphQL types are generated  
 // This is a temporary file to prevent import errors
 EOF
+    }
 fi
 
 # 3. Run svelte-kit sync to create .svelte-kit directory and types
