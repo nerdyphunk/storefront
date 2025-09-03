@@ -14,7 +14,6 @@
 		"generate": "graphql-codegen --config .graphqlrc.ts",
 		"generate:clean": "npm config set verify-deps-before-run false && npm config set _jsr-registry '' && graphql-codegen --config .graphqlrc.ts",
 		"prepare": "is-ci || (husky install && echo 'Husky hooks installed successfully')",
-		"postinstall": "node scripts/fix-lightningcss.js",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"dev:local": "npx dotenv-cli -e .env.development -- npm run dev",
