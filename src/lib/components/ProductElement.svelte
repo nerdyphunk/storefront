@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ProductListItemFragment } from "@gql";
+	import type { ProductListItemFragment } from "$lib/../gql";
 	import { formatMoneyRange } from "@lib/utils";
 	import LinkWithChannel from "./LinkWithChannel.svelte";
 	import ProductImageWrapper from "./ProductImageWrapper.svelte";

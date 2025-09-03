@@ -1,5 +1,5 @@
 import { invariant } from "ts-invariant";
-import { type TypedDocumentString } from "@gql";
+import { type TypedDocumentString } from "$lib/../gql";
 import { PUBLIC_SALEOR_API_URL } from "$env/static/public";
 // TODO: Implement auth client for SvelteKit if needed
 

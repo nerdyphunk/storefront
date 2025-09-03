@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { cartStore } from "@stores/cart";
-	import type { CheckoutFragmentFragment } from "@gql";
+	import type { CheckoutFragmentFragment } from "$lib/../gql";
 
 	let { checkout }: { checkout: CheckoutFragmentFragment | null } = $props();
 
