@@ -39,11 +39,13 @@ else
     exit 1
 fi
 
-# Исправляем индексный файл для экспорта всех типов
-echo "🔧 Fixing GraphQL exports..."
+# Check if GraphQL codegen created proper types
+echo "🔧 Checking GraphQL exports..."
 
-# Создаем базовый index.ts если он не существует или пустой
-if [ ! -f "src/gql/index.ts" ] || [ ! -s "src/gql/index.ts" ]; then
+if [ -f "src/gql/index.ts" ] && grep -q "export.*Document" src/gql/index.ts; then
+    echo "✅ GraphQL codegen created proper types"
+else
+    echo "⚠️  GraphQL codegen didn't create proper exports, creating fallback"
     echo 'export * from "./gql";
 export * from "./graphql";' > src/gql/index.ts
 fi
