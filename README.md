@@ -164,6 +164,21 @@ After altering or creating new GraphQL queries in the `src/graphql` folder:
 pnpm run generate
 ```
 
+#### Troubleshooting SSR Issues
+
+If you encounter `During SSR, Vite can't find the '@gql'` errors:
+
+```bash
+# Run setup to fix @gql imports
+pnpm run setup
+
+# Or run these commands individually:
+pnpm exec svelte-kit sync
+pnpm run generate
+```
+
+The `postinstall` script automatically runs these commands after `npm install` to prevent SSR issues.
+
 ### Docker Management
 
 ```bash
@@ -188,8 +203,10 @@ This project has been migrated from Next.js to SvelteKit. See [MIGRATION.md](./M
 
 ## 📁 Documentation
 
-- 🚀 [Quick Start Guide](./QUICK_START.md)
-- 🐳 [Deployment Guide](./DEPLOYMENT.md)
+- 🚀 [Quick Start Guide](./QUICK_START.md) 
+- 📋 [Complete Deployment Guide](./DEPLOYMENT_COMPLETE.md) - **Пошаговое руководство от A до Z**
+- 🐳 [Advanced Deployment](./DEPLOYMENT_GUIDE.md) 
+- 🔧 [GraphQL Setup & Troubleshooting](./GRAPHQL_SETUP.md)
 - 🔄 [Migration Details](./MIGRATION.md)
 
 ## ✨ What's New in SvelteKit Version
