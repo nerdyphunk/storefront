@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { cartStore } from "@stores/cart";
-	import type { CheckoutFragmentFragment } from "@gql/graphql";
+	import type { CheckoutFragmentFragment } from "@gql";
 
 	let { checkout }: { checkout: CheckoutFragmentFragment | null } = $props();
 
@@ -33,7 +33,8 @@
 				<div class="flex items-center space-x-4">
 					{#if line.totalPrice?.gross}
 						<span class="font-medium">
-							{Number(line.totalPrice.gross.amount).toFixed(2)} {line.totalPrice.gross.currency}
+							{Number(line.totalPrice.gross.amount).toFixed(2)}
+							{line.totalPrice.gross.currency}
 						</span>
 					{/if}
 
@@ -49,7 +50,8 @@
 		<div class="mt-6 border-t pt-4">
 			<div class="flex justify-between text-xl font-bold">
 				<span>Total:</span>
-				<span>{Number(checkout.totalPrice.gross.amount).toFixed(2)} {checkout.totalPrice.gross.currency}</span>
+				<span>{Number(checkout.totalPrice.gross.amount).toFixed(2)} {checkout.totalPrice.gross.currency}</span
+				>
 			</div>
 		</div>
 	{/if}

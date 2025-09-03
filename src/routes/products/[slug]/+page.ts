@@ -1,4 +1,4 @@
-import { ProductDetailsDocument } from "@gql/graphql";
+import { ProductDetailsDocument } from "@gql";
 import { executeGraphQL } from "@lib/graphql";
 import type { PageLoad } from "./$types";
 import { error } from "@sveltejs/kit";

@@ -2,8 +2,8 @@ import { writable } from "svelte/store";
 import { browser } from "$app/environment";
 import { getIdFromCookies, saveIdToCookie, findOrCreate } from "@lib/checkout";
 import { executeGraphQL } from "@lib/graphql";
-import { CheckoutAddLineDocument, CheckoutDeleteLinesDocument } from "@gql/graphql";
-import type { CheckoutFragmentFragment } from "@gql/graphql";
+import { CheckoutAddLineDocument, CheckoutDeleteLinesDocument } from "@gql";
+import type { CheckoutFragmentFragment } from "@gql";
 
 interface CartState {
 	checkout: CheckoutFragmentFragment | null;
@@ -79,9 +79,9 @@ function createCartStore() {
 				});
 
 				if (result.checkoutLinesAdd?.errors?.length) {
-				const firstError = result.checkoutLinesAdd.errors[0];
-				throw new Error(firstError?.message || "Failed to add item");
-			}
+					const firstError = result.checkoutLinesAdd.errors[0];
+					throw new Error(firstError?.message || "Failed to add item");
+				}
 
 				const updatedCheckout = result.checkoutLinesAdd?.checkout;
 
@@ -89,7 +89,8 @@ function createCartStore() {
 					...state,
 					checkout: (updatedCheckout as CheckoutFragmentFragment) || null,
 					isLoading: false,
-					itemsCount: updatedCheckout?.lines?.reduce((total: number, line: any) => total + line.quantity, 0) || 0,
+					itemsCount:
+						updatedCheckout?.lines?.reduce((total: number, line: any) => total + line.quantity, 0) || 0,
 					error: null,
 				}));
 			} catch (error) {
@@ -120,9 +121,9 @@ function createCartStore() {
 				});
 
 				if (result.checkoutLinesDelete?.errors?.length) {
-				const firstError = result.checkoutLinesDelete.errors[0];
-				throw new Error(firstError?.message || "Failed to remove item");
-			}
+					const firstError = result.checkoutLinesDelete.errors[0];
+					throw new Error(firstError?.message || "Failed to remove item");
+				}
 
 				const updatedCheckout = result.checkoutLinesDelete?.checkout;
 
@@ -130,7 +131,8 @@ function createCartStore() {
 					...state,
 					checkout: (updatedCheckout as CheckoutFragmentFragment) || null,
 					isLoading: false,
-					itemsCount: updatedCheckout?.lines?.reduce((total: number, line: any) => total + line.quantity, 0) || 0,
+					itemsCount:
+						updatedCheckout?.lines?.reduce((total: number, line: any) => total + line.quantity, 0) || 0,
 					error: null,
 				}));
 			} catch (error) {
