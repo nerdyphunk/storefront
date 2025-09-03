@@ -5,6 +5,9 @@ set -e
 
 echo "🔄 Generating GraphQL types..."
 
+# Создаем директорию src/gql если она не существует
+mkdir -p src/gql
+
 # Определяем правильный пакетный менеджер
 if [ -f "pnpm-lock.yaml" ] && (command -v pnpm > /dev/null 2>&1 || command -v corepack > /dev/null 2>&1); then
     # Если pnpm недоступен, активируем через corepack
@@ -24,7 +27,11 @@ fi
 
 # Исправляем индексный файл для экспорта всех типов
 echo "🔧 Fixing GraphQL exports..."
-echo 'export * from "./gql";
+
+# Создаем базовый index.ts если он не существует или пустой
+if [ ! -f "src/gql/index.ts" ] || [ ! -s "src/gql/index.ts" ]; then
+    echo 'export * from "./gql";
 export * from "./graphql";' > src/gql/index.ts
+fi
 
 echo "✅ GraphQL types generated successfully!"

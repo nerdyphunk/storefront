@@ -164,6 +164,21 @@ After altering or creating new GraphQL queries in the `src/graphql` folder:
 pnpm run generate
 ```
 
+#### Troubleshooting SSR Issues
+
+If you encounter `During SSR, Vite can't find the '@gql'` errors:
+
+```bash
+# Run setup to fix @gql imports
+pnpm run setup
+
+# Or run these commands individually:
+pnpm exec svelte-kit sync
+pnpm run generate
+```
+
+The `postinstall` script automatically runs these commands after `npm install` to prevent SSR issues.
+
 ### Docker Management
 
 ```bash
