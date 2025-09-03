@@ -3,6 +3,19 @@ set -e
 
 echo "🔄 Running postinstall setup..."
 
+# Load environment variables from .env files
+load_env() {
+    local env_file="$1"
+    if [ -f "$env_file" ]; then
+        export $(grep -v '^#' "$env_file" | xargs)
+        echo "🔧 Environment loaded from $env_file"
+    fi
+}
+
+# Try to load environment variables in order of preference
+load_env ".env.development"
+load_env ".env"
+
 # 1. First run svelte-kit sync to create .svelte-kit directory and types
 echo "📦 Running svelte-kit sync..."
 if command -v pnpm > /dev/null 2>&1; then
@@ -27,6 +40,7 @@ export {};' > src/gql/index.ts
 fi
 
 # 4. Run GraphQL codegen if API URL is available
+echo "🔍 Checking PUBLIC_SALEOR_API_URL: $PUBLIC_SALEOR_API_URL"
 if [ -n "$PUBLIC_SALEOR_API_URL" ] && [ "$PUBLIC_SALEOR_API_URL" != "" ]; then
     echo "🔄 Running GraphQL codegen..."
     if command -v pnpm > /dev/null 2>&1; then

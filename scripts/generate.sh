@@ -3,7 +3,21 @@ set -e
 
 # Скрипт для генерации GraphQL кода без npm warnings
 
+# Load environment variables from .env files  
+load_env() {
+    local env_file="$1"
+    if [ -f "$env_file" ]; then
+        export $(grep -v '^#' "$env_file" | xargs)
+        echo "🔧 Environment loaded from $env_file"
+    fi
+}
+
+# Try to load environment variables in order of preference
+load_env ".env.development"
+load_env ".env"
+
 echo "🔄 Generating GraphQL types..."
+echo "🔍 Using PUBLIC_SALEOR_API_URL: $PUBLIC_SALEOR_API_URL"
 
 # Создаем директорию src/gql если она не существует
 mkdir -p src/gql
