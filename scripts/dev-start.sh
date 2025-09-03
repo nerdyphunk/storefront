@@ -1,14 +1,11 @@
 #!/bin/bash
 
-# Development server with terminal fix
+# Development server with proper signal handling
 # Usage: ./scripts/dev-start.sh
 
 echo "🚀 Starting development server"
 echo "💡 Press Ctrl+C to stop"
 
-# Direct approach - call vite dev directly with proper signal handling
-npx dotenv-cli -e .env.development -- vite dev
-
-# Ensure terminal is reset after exit
-stty sane 2>/dev/null || true
-echo "✅ Development server stopped"
+# Use exec to replace the shell process directly
+# This avoids signal propagation issues through process chains
+exec npx dotenv-cli -e .env.development -- vite dev

@@ -5,12 +5,9 @@
 
 ENV=${1:-development}
 
-# Suppress npm lifecycle errors
+# Prevent npm lifecycle errors by setting proper signal handling
 export npm_config_loglevel=error
 export npm_config_progress=false
-
-# Save original terminal settings
-original_stty=$(stty -g 2>/dev/null)
 
 # Process PID tracking
 server_pid=""
@@ -21,7 +18,7 @@ cleanup() {
     if [ "$shutdown_in_progress" = true ]; then
         echo "\n⚡ Force killing..."
         if [ -n "$server_pid" ]; then
-            kill -KILL "$server_pid" 2>/dev/null
+            kill -KILL "$server_pid" 2>/dev/null || true
         fi
         exit 1
     fi
@@ -29,9 +26,10 @@ cleanup() {
     shutdown_in_progress=true
     echo "\n🛑 Shutting down $ENV server..."
     
-    # Kill server process
+    # Kill server process with proper signal propagation
     if [ -n "$server_pid" ]; then
-        kill -TERM "$server_pid" 2>/dev/null
+        # Send SIGTERM first
+        kill -TERM "$server_pid" 2>/dev/null || true
         
         # Wait up to 5 seconds for graceful shutdown
         local count=0
@@ -43,13 +41,8 @@ cleanup() {
         # Force kill if still running
         if kill -0 "$server_pid" 2>/dev/null; then
             echo "⚠️  Force killing after timeout"
-            kill -KILL "$server_pid" 2>/dev/null
+            kill -KILL "$server_pid" 2>/dev/null || true
         fi
-    fi
-    
-    # Restore terminal settings
-    if [ -n "$original_stty" ]; then
-        stty "$original_stty" 2>/dev/null
     fi
     
     echo "✅ Server stopped"
@@ -57,47 +50,31 @@ cleanup() {
 }
 
 # Set up signal traps
-trap cleanup INT TERM EXIT
+trap cleanup INT TERM
+# Also handle EXIT to cleanup on script exit
+trap cleanup EXIT
 
 echo "🚀 Starting $ENV server (clean mode)"
 echo "💡 Press Ctrl+C once to stop (double Ctrl+C to force)"
 
-# Start server based on environment
+# Start server based on environment with exec to replace the shell process
 case $ENV in
     development)
-        # Use stty raw mode temporarily to avoid terminal issues with vite
-        stty raw 2>/dev/null; stty -raw 2>/dev/null
-        npx dotenv-cli -e .env.development -- node_modules/.bin/vite dev --port 3000 &
-        server_pid=$!
+        # Use exec to replace shell process, avoiding extra process layer
+        exec npx dotenv-cli -e .env.development -- node_modules/.bin/vite dev --port 3000
         ;;
     production)
-        npx dotenv-cli -e .env.production -- node build/index.js &
-        server_pid=$!
+        # Direct execution to avoid npm wrapper issues  
+        echo "Server PID: $$"
+        exec npx dotenv-cli -e .env.production -- node build/index.js
         ;;
     test)
-        npx dotenv-cli -e .env.test -- node build/index.js &
-        server_pid=$!
+        # Direct execution to avoid npm wrapper issues
+        echo "Server PID: $$"
+        exec npx dotenv-cli -e .env.test -- node build/index.js
         ;;
     *)
         echo "❌ Unknown environment: $ENV"
         exit 1
         ;;
 esac
-
-# Check if server started successfully
-if [ -z "$server_pid" ]; then
-    echo "❌ Failed to start server"
-    exit 1
-fi
-
-# Wait for server process
-echo "Server PID: $server_pid"
-wait "$server_pid" 2>/dev/null
-exit_code=$?
-
-# Clean exit
-if [ "$shutdown_in_progress" != true ]; then
-    echo "\nServer exited with code: $exit_code"
-fi
-
-cleanup
