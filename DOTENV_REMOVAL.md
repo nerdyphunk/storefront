@@ -145,7 +145,12 @@ load_env() {
 
 3. Если проблема сохраняется, проверьте что файл `src/gql/index.ts` содержит нужные экспорты.
 
-**Временное решение:** Файл `src/gql/index.ts` содержит placeholder-экспорты, которые предотвращают ошибки импорта до генерации настоящих типов.
+**Временное решение:** Файл `src/gql/index.ts` содержит:
+- `MockGraphQLDocument` класс с рабочим методом `toString()`
+- Реалистичные GraphQL запросы для ProductList
+- Placeholder-экспорты, которые предотвращают ошибки импорта
+
+Это позволяет приложению запускаться и делать API-вызовы до генерации настоящих типов.
 
 ### "PUBLIC_SALEOR_API_URL not set" во время pnpm install
 
@@ -156,3 +161,11 @@ load_env() {
 export $(grep -v '^#' .env.development | xargs)
 pnpm install
 ```
+
+### "Cannot read properties of undefined (reading 'toString')"
+
+**Проблема:** GraphQL документы не имеют метода toString()
+
+**Решено:** Создан класс `MockGraphQLDocument` с методом `toString()`. Теперь placeholder документы ведут себя как настоящие GraphQL документы.
+
+Приложение теперь может запуститься и отобразить сообщения "Using Saleor API" и "Using fallback mock data" вместо критических ошибок.
