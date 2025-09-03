@@ -1,4 +1,4 @@
-import { ProductListByCollectionDocument } from "@gql/graphql";
+import { ProductListByCollectionDocument } from "@gql";
 import { executeGraphQL } from "@lib/graphql";
 import type { PageLoad } from "./$types";
 
@@ -24,7 +24,7 @@ export const load: PageLoad = async ({ fetch }) => {
 		}
 
 		// If no featured collection, try to get any products
-		const { ProductListPaginatedDocument } = await import("@gql/graphql");
+		const { ProductListPaginatedDocument } = await import("@gql");
 		try {
 			const data = await executeGraphQL(ProductListPaginatedDocument, {
 				variables: {
@@ -55,30 +55,30 @@ export const load: PageLoad = async ({ fetch }) => {
 						url: "https://via.placeholder.com/300x300?text=Check+API",
 						alt: "Check API Configuration",
 					},
-					category: { 
+					category: {
 						__typename: "Category" as const,
 						id: "system-cat",
-						name: "System" 
+						name: "System",
 					},
 					pricing: {
 						__typename: "ProductPricingInfo" as const,
 						priceRange: {
 							__typename: "TaxedMoneyRange" as const,
-							start: { 
+							start: {
 								__typename: "TaxedMoney" as const,
-								gross: { 
+								gross: {
 									__typename: "Money" as const,
-									amount: 0, 
-									currency: "USD" 
-								} 
+									amount: 0,
+									currency: "USD",
+								},
 							},
-							stop: { 
+							stop: {
 								__typename: "TaxedMoney" as const,
-								gross: { 
+								gross: {
 									__typename: "Money" as const,
-									amount: 0, 
-									currency: "USD" 
-								} 
+									amount: 0,
+									currency: "USD",
+								},
 							},
 						},
 					},

@@ -1,4 +1,4 @@
-import { ProductListPaginatedDocument } from "@gql/graphql";
+import { ProductListPaginatedDocument } from "@gql";
 import { executeGraphQL } from "@lib/graphql";
 import type { PageLoad } from "./$types";
 
@@ -37,7 +37,6 @@ export const load: PageLoad = async ({ url }) => {
 		};
 	}
 };
-
 
 // Disable prerendering for this page since we use dynamic content loading
 export const prerender = false;

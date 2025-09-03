@@ -22,4 +22,9 @@ else
     exit 1
 fi
 
+# Исправляем индексный файл для экспорта всех типов
+echo "🔧 Fixing GraphQL exports..."
+echo 'export * from "./gql";
+export * from "./graphql";' > src/gql/index.ts
+
 echo "✅ GraphQL types generated successfully!"

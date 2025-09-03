@@ -1,4 +1,4 @@
-import { CheckoutCreateDocument, CheckoutFindDocument } from "@gql/graphql";
+import { CheckoutCreateDocument, CheckoutFindDocument } from "@gql";
 import { executeGraphQL } from "./graphql";
 import { browser } from "$app/environment";
 
