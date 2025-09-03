@@ -20,19 +20,33 @@ cleanup() {
 # Set up trap for clean exit
 trap cleanup INT TERM
 
+# Function to load environment variables
+load_env() {
+    local env_file=".env.$1"
+    if [ -f "$env_file" ]; then
+        export $(grep -v '^#' "$env_file" | xargs)
+        echo "🔧 Environment loaded from $env_file"
+    else
+        echo "⚠️  Warning: Environment file $env_file not found"
+    fi
+}
+
 # Start the appropriate server based on environment
 case $ENV in
     development)
         # Development with hot reload
-        PORT=3000 npx dotenv-cli -e .env.development -- npm run dev 2>&1 | sed 's/^.*ELIFECYCLE.*$//' | grep -v "Command failed" || true
+        load_env "development"
+        npm run dev 2>&1 | sed 's/^.*ELIFECYCLE.*$//' | grep -v "Command failed" || true
         ;;
     production)
         # Production server
-        PORT=3001 npx dotenv-cli -e .env.production -- npm run start 2>&1 | sed 's/^.*ELIFECYCLE.*$//' | grep -v "Command failed" || true
+        load_env "production"
+        npm run start 2>&1 | sed 's/^.*ELIFECYCLE.*$//' | grep -v "Command failed" || true
         ;;
     test)
         # Test server
-        PORT=3002 npx dotenv-cli -e .env.test -- npm run start 2>&1 | sed 's/^.*ELIFECYCLE.*$//' | grep -v "Command failed" || true
+        load_env "test"
+        npm run start 2>&1 | sed 's/^.*ELIFECYCLE.*$//' | grep -v "Command failed" || true
         ;;
     *)
         echo "❌ Unknown environment: $ENV"

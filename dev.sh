@@ -15,33 +15,33 @@ fi
 
 # Check for pnpm first (preferred)
 if command -v pnpm > /dev/null 2>&1 && pnpm --version > /dev/null 2>&1; then
-    # Test if pnpm can execute dotenv (the actual command for $DOTENV_CMD package)
-    if pnpm exec dotenv --help > /dev/null 2>&1; then
-        PKG_MANAGER="pnpm"
-        PKG_EXEC="pnpm exec"
-        DOTENV_CMD="dotenv"  # pnpm uses 'dotenv' command from dotenv-cli package
-        echo "📦 Using package manager: $PKG_MANAGER (with pnpm configuration)"
-    else
-        echo "⚠️  pnpm found but dotenv not available, falling back to npm"
-        PKG_MANAGER="npm"
-        PKG_EXEC="npx"
-        DOTENV_CMD="dotenv-cli"  # npm uses 'dotenv-cli' command
-        echo "📦 Using package manager: $PKG_MANAGER (fallback from pnpm)"
-    fi
+    PKG_MANAGER="pnpm"
+    PKG_EXEC="pnpm exec"
+    echo "📦 Using package manager: $PKG_MANAGER"
 elif command -v npm > /dev/null 2>&1 && npm --version > /dev/null 2>&1; then
     PKG_MANAGER="npm"
     PKG_EXEC="npx"
-    DOTENV_CMD="dotenv-cli"  # npm uses 'dotenv-cli' command
     # Create npm-friendly config if needed
     if [ -f ".pnpmrc" ] && [ ! -f ".npmrc" ]; then
         echo "🔧 Creating npm-compatible .npmrc from .pnpmrc"
         echo "save-exact=true" > .npmrc
     fi
-    echo "📦 Using package manager: $PKG_MANAGER (with npm configuration)"
+    echo "📦 Using package manager: $PKG_MANAGER"
 else
     echo "❌ No package manager found. Please install npm or pnpm."
     exit 1
 fi
+
+# Function to load environment variables from file
+load_env() {
+    local env_file="$1"
+    if [ -f "$env_file" ]; then
+        export $(grep -v '^#' "$env_file" | xargs)
+        echo "🔧 Environment loaded from $env_file"
+    else
+        echo "⚠️  Warning: Environment file $env_file not found"
+    fi
+}
 
 show_help() {
     echo "🌐 Saleor SvelteKit Storefront - Development CLI"
@@ -80,15 +80,18 @@ start_local() {
     case $ENV in
         development)
             echo "💻 Development mode with hot reload (port 3000)"
-            ./scripts/dev-start.sh
+            load_env ".env.development"
+            $PKG_MANAGER run dev
             ;;
         production)
             echo "🎭 Production mode with optimized build (port 3001)"
-            $PKG_MANAGER run build:production && ./scripts/start-clean.sh production
+            load_env ".env.production"
+            $PKG_MANAGER run build && node build/index.js
             ;;
         test)
             echo "🧪 Test mode for testing environment (port 3002)"
-            $PKG_EXEC $DOTENV_CMD -e .env.test -- $PKG_MANAGER run build && ./scripts/start-clean.sh test
+            load_env ".env.test"
+            $PKG_MANAGER run build && node build/index.js
             ;;
         *)
             echo "❌ Unknown environment: $ENV"
@@ -111,13 +114,16 @@ build_project() {
     echo "🏗️  Building project ($ENV)..."
     case $ENV in
         development)
-            $PKG_EXEC $DOTENV_CMD -e .env.development -- $PKG_MANAGER run build
+            load_env ".env.development"
+            $PKG_MANAGER run build
             ;;
         production)
-            $PKG_MANAGER run build:production
+            load_env ".env.production"
+            $PKG_MANAGER run build
             ;;
         test)
-            $PKG_EXEC $DOTENV_CMD -e .env.test -- $PKG_MANAGER run build
+            load_env ".env.test"
+            $PKG_MANAGER run build
             ;;
         *)
             echo "❌ Unknown environment: $ENV"
@@ -145,23 +151,28 @@ run_tests() {
     case $ENV in
         development)
             echo "🎯 Testing against development environment (port 3000)"
-            BASE_URL=http://127.0.0.1:3000 $PKG_EXEC $DOTENV_CMD -e .env.test -- $PKG_EXEC playwright test
+            load_env ".env.test"
+            BASE_URL=http://127.0.0.1:3000 $PKG_EXEC playwright test
             ;;
         production)
             echo "🎯 Testing against production environment (port 3001)" 
-            BASE_URL=http://127.0.0.1:3001 $PKG_EXEC $DOTENV_CMD -e .env.test -- $PKG_EXEC playwright test
+            load_env ".env.test"
+            BASE_URL=http://127.0.0.1:3001 $PKG_EXEC playwright test
             ;;
         test)
             echo "🎯 Testing against test environment (port 3002)"
-            BASE_URL=http://127.0.0.1:3002 $PKG_EXEC $DOTENV_CMD -e .env.test -- $PKG_EXEC playwright test
+            load_env ".env.test"
+            BASE_URL=http://127.0.0.1:3002 $PKG_EXEC playwright test
             ;;
         local)
             echo "🎯 Testing with local configuration (default port)"
-            $PKG_EXEC $DOTENV_CMD -e .env.test -- $PKG_EXEC playwright test
+            load_env ".env.test"
+            $PKG_EXEC playwright test
             ;;
         *)
             echo "🎯 Testing with default configuration"
-            $PKG_EXEC $DOTENV_CMD -e .env.test -- $PKG_EXEC playwright test
+            load_env ".env.test"
+            $PKG_EXEC playwright test
             ;;
     esac
 }

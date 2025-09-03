@@ -1,3 +1,13 @@
+# ⚠️  DEPRECATED - DOTENV REMOVED
+
+> **Важно:** Этот документ устарел!
+>
+> `dotenv-cli` был удален из проекта. Проблемы с Ctrl+C больше не актуальны.
+>
+> См. [DOTENV_REMOVAL.md](./DOTENV_REMOVAL.md) для современной информации.
+
+---
+
 # Исправление проблемы с Ctrl+C (ELIFECYCLE Command failed)
 
 ## Проблема

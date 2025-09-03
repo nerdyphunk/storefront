@@ -10,7 +10,7 @@ if curl -s http://localhost:3000 > /dev/null 2>&1; then
     echo "✅ Development server detected on http://localhost:3000"
     echo "🧪 Running tests against existing server..."
     echo ""
-    BASE_URL=http://localhost:3000 npx dotenv-cli -e .env.test -- npx playwright test
+    export $(grep -v '^#' .env.test | xargs) && BASE_URL=http://localhost:3000 npx playwright test
 else
     echo "⚠️  No development server detected on http://localhost:3000"
     echo "🚀 Two options:"
@@ -32,7 +32,7 @@ else
             ;;
         2)
             echo "🔄 Starting tests with auto-server (this may take a while)..."
-            npx dotenv-cli -e .env.test -- npx playwright test
+            export $(grep -v '^#' .env.test | xargs) && npx playwright test
             ;;
         *)
             echo "❌ Invalid choice. Please run the script again."

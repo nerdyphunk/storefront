@@ -1,3 +1,13 @@
+# ⚠️  DEPRECATED - DOTENV REMOVED
+
+> **Важно:** Этот документ устарел!
+>
+> `dotenv-cli` был удален из проекта. Проблемы с graceful shutdown больше не актуальны.
+>
+> См. [DOTENV_REMOVAL.md](./DOTENV_REMOVAL.md) для современной информации.
+
+---
+
 # Graceful Shutdown для Saleor Storefront
 
 ## Проблема

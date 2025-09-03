@@ -343,7 +343,7 @@ ls -la .env*
 cat .env.development
 
 # Load specific environment
-dotenv-cli -e .env.development -- pnpm run dev
+export $(grep -v '^#' .env.development | xargs) && pnpm run dev
 ```
 
 ### Debug Commands

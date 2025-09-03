@@ -5,7 +5,7 @@
 echo "🧪 Testing graceful shutdown approaches"
 echo "
 === Test 1: Direct vite command ===" 
-echo "Command: npx dotenv-cli -e .env.development -- vite dev --port 3000"
+echo "Command: export $(grep -v '^#' .env.development | xargs) && vite dev --port 3000"
 echo "Expected: Clean exit with Ctrl+C"
 echo "Try it: Ctrl+C should exit cleanly"
 echo "

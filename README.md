@@ -109,7 +109,10 @@ cd saleor-storefront
 # Install dependencies
 pnpm install
 
-# Start development
+# Start development (manual env vars)
+export $(grep -v '^#' .env.development | xargs) && pnpm run dev
+
+# Or use the convenience script
 pnpm run dev:local
 ```
 

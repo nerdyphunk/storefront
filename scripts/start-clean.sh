@@ -57,21 +57,35 @@ trap cleanup EXIT
 echo "🚀 Starting $ENV server (clean mode)"
 echo "💡 Press Ctrl+C once to stop (double Ctrl+C to force)"
 
+# Load environment variables
+load_env() {
+    local env_file=".env.$1"
+    if [ -f "$env_file" ]; then
+        export $(grep -v '^#' "$env_file" | xargs)
+        echo "🔧 Environment loaded from $env_file"
+    else
+        echo "⚠️  Warning: Environment file $env_file not found"
+    fi
+}
+
 # Start server based on environment with exec to replace the shell process
 case $ENV in
     development)
+        load_env "development"
         # Use exec to replace shell process, avoiding extra process layer
-        exec npx dotenv-cli -e .env.development -- node_modules/.bin/vite dev --port 3000
+        exec node_modules/.bin/vite dev --port 3000
         ;;
     production)
+        load_env "production"
         # Direct execution to avoid npm wrapper issues  
         echo "Server PID: $$"
-        exec npx dotenv-cli -e .env.production -- node build/index.js
+        exec node build/index.js
         ;;
     test)
+        load_env "test"
         # Direct execution to avoid npm wrapper issues
         echo "Server PID: $$"
-        exec npx dotenv-cli -e .env.test -- node build/index.js
+        exec node build/index.js
         ;;
     *)
         echo "❌ Unknown environment: $ENV"

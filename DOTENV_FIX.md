@@ -1,3 +1,13 @@
+# ⚠️  DEPRECATED - DOTENV REMOVED
+
+> **Важно:** Этот документ устарел! 
+> 
+> `dotenv` и `dotenv-cli` были удалены из проекта.
+> 
+> См. [DOTENV_REMOVAL.md](./DOTENV_REMOVAL.md) для современной информации.
+
+---
+
 # Fix for dotenv-cli Production Build Error
 
 ## Проблема

@@ -1,3 +1,15 @@
+# ⚠️  DEPRECATED - DOTENV REMOVED
+
+> **Важно:** Этот документ частично устарел!
+>
+> `dotenv-cli` был удален из проекта. Примеры команд с dotenv-cli устарели.
+>
+> Используйте вместо `dotenv-cli` команду: `export $(grep -v '^#' .env.file | xargs)`
+>
+> См. [DOTENV_REMOVAL.md](./DOTENV_REMOVAL.md) для полной информации.
+
+---
+
 # Fix: Production Server with @sveltejs/adapter-node
 
 ## Проблема
